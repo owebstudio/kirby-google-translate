@@ -19,8 +19,8 @@ use Kirby\Form\FieldClass;
  */
 abstract class Field
 {
-    private Request $request;
     public string $format = 'text';
+    private Request $request;
     private KirbyField|FieldClass $field;
 
     public function __construct(KirbyField|FieldClass $field, Request $request)

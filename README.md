@@ -24,15 +24,35 @@ the contents of the relevant language.
 detailed pricing, you can
 check the official page: https://cloud.google.com/translate/pricing
 
+## Supported Fields & Blocks
+
+### Fields
+
+- blocks
+- layout
+- list
+- structure
+- textarea
+- text
+- writer
+
+### Blocks
+
+- heading
+- list
+- markdown
+- quote
+- text
+
 ## Options
 
-| Option         | Type    | Default | Description                                                                                                                                     |
-|:---------------|:--------|:--------|:------------------------------------------------------------------------------------------------------------------------------------------------|
-| apiKey         | string  | null    | GCT Api Key (required)                                                                                                                          |
-| fieldTypes     | array   | []      | Determines the field types you want to be translated. Default: `blocks`, `layout`, `list`, `structure`, `textarea`, `text` and `writer` fields. |
-| blockTypes     | array   | []      | Determines the blocks types you want to be translated. Default: `heading`, `list`, `markdown`, `quote` and `text` types.                        |
-| translateTitle | boolean | true    | When enabled, the title is translated along with the page.                                                                                      |
-| translateSlug  | boolean | true    | When enabled, the slug is translated along with the page.                                                                                       |
+| Option         | Type    | Default | Description                                                |
+|:---------------|:--------|:--------|:-----------------------------------------------------------|
+| apiKey         | string  | null    | Google Cloud Translate Api Key (required)                  |
+| fieldTypes     | array   | []      | Determines the field types you want to be translated.      |
+| blockTypes     | array   | []      | Determines the blocks types you want to be translated.     |
+| translateTitle | boolean | true    | When enabled, the title is translated along with the page. |
+| translateSlug  | boolean | true    | When enabled, the slug is translated along with the page.  |
 
 All options optional and the values can be updated in the `config.php` file and prefixed
 with `owebstudio.google-translate.`.
@@ -60,6 +80,8 @@ return [
 
 class CustomField extends \Oweb\GoogleTranslate\Fields\Field
 {
+    public string $format = 'html'; // text or html
+
     public function value(): string|array
     {
         $value = $this->field()->value();
