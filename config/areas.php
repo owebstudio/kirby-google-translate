@@ -73,8 +73,9 @@ return [
                         return [
                             'component' => 'k-text-dialog',
                             'props' => [
+                                'size' => 'medium',
                                 'submitButton' => I18n::translate('confirm'),
-                                'text' => t('owebstudio.google-translate.confirm'),
+                                'text' => t('owebstudio.google-translate.info') . "<br><br>" . t('owebstudio.google-translate.confirm'),
                                 'theme' => 'negative'
                             ]
                         ];
