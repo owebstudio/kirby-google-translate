@@ -24,7 +24,14 @@ the contents of the relevant language.
 detailed pricing, you can
 check the official page: https://cloud.google.com/translate/pricing
 
-## Supported Fields & Blocks
+## Fields & Blocks
+
+Only the following fields and blocks are supported. This is because some fields do not need translation. such as email,
+url or date, etc.
+
+Also custom fields are not supported because their data structure is unknown. Therefore this plugin also allows you to
+define
+a class that reads and saves the custom data structure of custom fields.
 
 ### Fields
 
@@ -73,7 +80,10 @@ return [
 ];
 ```
 
-## Defining field types
+## Defining custom field types
+
+- Field should extends `\Oweb\GoogleTranslate\Fields\Field`
+- Field have to `value` and `save` methods
 
 ```php
 <?php
