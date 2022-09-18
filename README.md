@@ -35,6 +35,8 @@ Also custom fields are not supported because their data structure is unknown. Th
 define
 a class that reads and saves the custom data structure of custom fields.
 
+Supports nested data/form structure, but has not been tested beyond 2 levels.
+
 ### Fields
 
 - blocks
