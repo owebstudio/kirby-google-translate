@@ -1,0 +1,52 @@
+{
+  "name": "owebstudio/kirby-google-translate",
+  "description": "Google Translate integration for Kirby 3.",
+  "type": "kirby-plugin",
+  "version": "1.0.0",
+  "license": "MIT",
+  "keywords": [
+    "owebstudio",
+    "owebstudio-plugin",
+    "kirby",
+    "kirby-3",
+    "kirby3-plugin",
+    "kirby-plugin",
+    "kirby-google-translate",
+    "google-translate"
+  ],
+  "homepage": "https://owebstudio.com",
+  "support": {
+    "email": "support@owebstudio.com"
+  },
+  "authors": [
+    {
+      "name": "oweb studio",
+      "email": "contact@owebstudio.com",
+      "homepage": "https://owebstudio.com"
+    }
+  ],
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "getkirby/composer-installer": true
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Oweb\\GoogleTranslate\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^8.0",
+    "ext-iconv": "*",
+    "getkirby/composer-installer": "^1.2",
+    "google/cloud-translate": "^1.12"
+  },
+  "extra": {
+    "installer-name": "kirby-move-pages"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

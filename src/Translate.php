@@ -1,0 +1,60 @@
+<?php
+
+namespace Oweb\GoogleTranslate;
+
+use Kirby\Cms\Page;
+use Kirby\Form\Form;
+use Kirby\Form\Fields as KirbyFields;
+use Google\Cloud\Translate\V2\Translaterequest;
+
+/**
+ * Kirby Google Translate Package
+ *
+ * @package   Oweb
+ * @author    oweb studio <support@owebstudio.com>
+ * @link      https://owebstudio.com
+ * @copyright oweb studio
+ * @license   MIT
+ */
+class Translate
+{
+    public Request $request;
+
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
+
+    public function run(): array
+    {
+        $form = Form::for($this->request->page(), [
+            'language' => $this->request->sourceLanguage()
+        ]);
+
+        return static::values($form->fields(), $this->request);
+    }
+
+    public static function values(KirbyFields $fields, Request $request): array
+    {
+        $data = [];
+
+        /** @var \Kirby\Form\Field $field */
+        foreach ($fields as $field) {
+            $name = $field->name();
+            $type = $field->type();
+
+            if ($field->disabled()) {
+                continue;
+            }
+
+            // translate only supported field types
+            if ($fieldType = Fields::get($type, $field, $request)) {
+                $data[$name] = $fieldType->value();
+            } else {
+                $data[$name] = $field->content();
+            }
+        }
+
+        return $data;
+    }
+}
