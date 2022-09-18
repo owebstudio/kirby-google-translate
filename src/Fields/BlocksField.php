@@ -2,10 +2,11 @@
 
 namespace Oweb\GoogleTranslate\Fields;
 
+use Kirby\Cms\App as Kirby;
 use Oweb\GoogleTranslate\Translate;
 
 /**
- * Structure field
+ * Blocks field
  *
  * @package   Oweb
  * @author    oweb studio <support@owebstudio.com>
@@ -17,17 +18,25 @@ class BlocksField extends Field
 {
     public function value(): string|array
     {
-        $data = [];
+        $value = $this->field()->value();
 
-        foreach ($this->field()->value() as $block) {
-            $blockFields = $this->field()->fields($block['type']);
-            $fields = $this->field()->form($blockFields, $block['content'])->fields();
+        $coreBlockTypes = ['heading', 'list', 'markdown', 'quote', 'text'];
+        $allowedBlockTypes = Kirby::instance()->option('owebstudio.google-translate.blockTypes', []);
+        $blockTypes = array_replace($coreBlockTypes, $allowedBlockTypes);
 
-            $block['content'] = Translate::values($fields, $this->request());
-            $data[] = $block;
+        foreach ($value as &$block) {
+            $type = $block['type'];
+
+            // only allowed block types will translated
+            if (in_array($type, $blockTypes) === true) {
+                $blockFields = $this->field()->fields($block['type']);
+                $fields = $this->field()->form($blockFields, $block['content'])->fields();
+
+                $block['content'] = Translate::values($fields, $this->request());
+            }
         }
 
-        return $this->save($data);
+        return $this->save($value);
     }
 
     public function save($value)

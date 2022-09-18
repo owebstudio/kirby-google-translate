@@ -7,6 +7,7 @@ use Kirby\Form\Field;
 use Kirby\Form\FieldClass;
 use Oweb\GoogleTranslate\Fields\Field as TranslateField;
 use Oweb\GoogleTranslate\Fields\BlocksField;
+use Oweb\GoogleTranslate\Fields\LayoutField;
 use Oweb\GoogleTranslate\Fields\ListField;
 use Oweb\GoogleTranslate\Fields\StructureField;
 use Oweb\GoogleTranslate\Fields\TextField;
@@ -32,14 +33,9 @@ class Fields
             return static::$types;
         }
 
-        /*
-        $coreFieldTypes = [
-            'layout' => true,
-        ];
-        */
-
         $coreFieldTypes = [
             'blocks' => BlocksField::class,
+            'layout' => LayoutField::class,
             'list' => ListField::class,
             'structure' => StructureField::class,
             'text' => TextField::class,

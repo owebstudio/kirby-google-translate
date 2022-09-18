@@ -43,7 +43,8 @@ class Translate
             $name = $field->name();
             $type = $field->type();
 
-            if ($field->disabled()) {
+            // do not add disabled or non-translatable fields
+            if ($field->disabled() === true || $field->translate() === false) {
                 continue;
             }
 
@@ -51,7 +52,7 @@ class Translate
             if ($fieldType = Fields::get($type, $field, $request)) {
                 $data[$name] = $fieldType->value();
             } else {
-                $data[$name] = $field->content();
+                $data[$name] = $field->content() ?? $field->value();
             }
         }
 

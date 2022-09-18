@@ -990,6 +990,7 @@ return array(
     'Oweb\\GoogleTranslate\\Fields' => $baseDir . '/src/Fields.php',
     'Oweb\\GoogleTranslate\\Fields\\BlocksField' => $baseDir . '/src/Fields/BlocksField.php',
     'Oweb\\GoogleTranslate\\Fields\\Field' => $baseDir . '/src/Fields/Field.php',
+    'Oweb\\GoogleTranslate\\Fields\\LayoutField' => $baseDir . '/src/Fields/LayoutField.php',
     'Oweb\\GoogleTranslate\\Fields\\ListField' => $baseDir . '/src/Fields/ListField.php',
     'Oweb\\GoogleTranslate\\Fields\\StructureField' => $baseDir . '/src/Fields/StructureField.php',
     'Oweb\\GoogleTranslate\\Fields\\TextField' => $baseDir . '/src/Fields/TextField.php',

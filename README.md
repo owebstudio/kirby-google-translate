@@ -2,78 +2,89 @@
 
 Google Translate integration for Kirby 3.
 
+This plugin provides [Google Cloud Translation](https://cloud.google.com/translate) integration for Kirby 3 pages. It
+makes instant translation and updates
+the contents of the relevant language.
+
 ## Installation
 
 1. Download the latest release
 2. Unzip downloaded file
 3. Copy/paste unzipped folder in your `/site/plugins` folder
 
-## Usage
+## Requirements
 
-Don't forget! To move a page under the another page, the parent page must support the page template you are moving. This option must be a query language string or an array of templates and must be a collection of pages, not a single page.
+- Kirby 3.7+
+- PHP 8.0+
+- Google Cloud Translation API KEY
 
-### Templates
+## Google Cloud Translation
 
-Simply specify under which parent templates a page can be moved.
+[Google Cloud Translation](https://cloud.google.com/translate) is free for up to **500,000 characters** per month. For
+detailed pricing, you can
+check the official page: https://cloud.google.com/translate/pricing
 
-```yaml
-# /site/blueprints/pages/project.yml
-title: Project
+## Options
 
-options:
-  # parent page templates where you can move this page
-  move:
-    - projects
-    - portfolio
+| Option         | Type    | Default | Description                                                                                                                                     |
+|:---------------|:--------|:--------|:------------------------------------------------------------------------------------------------------------------------------------------------|
+| apiKey         | string  | null    | GCT Api Key (required)                                                                                                                          |
+| fieldTypes     | array   | []      | Determines the field types you want to be translated. Default: `blocks`, `layout`, `list`, `structure`, `textarea`, `text` and `writer` fields. |
+| blockTypes     | array   | []      | Determines the blocks types you want to be translated. Default: `heading`, `list`, `markdown`, `quote` and `text` types.                        |
+| translateTitle | boolean | true    | When enabled, the title is translated along with the page.                                                                                      |
+| translateSlug  | boolean | true    | When enabled, the slug is translated along with the page.                                                                                       |
+
+All options optional and the values can be updated in the `config.php` file and prefixed
+with `owebstudio.google-translate.`.
+
+## Sample options
+
+```php
+<?php
+
+// /site/config/config.php
+return [
+    'owebstudio.google-translate' => [
+        'apiKey' => 'MY_GOOGLE_API_KEY',
+        'blockTypes' => ['my-custom-block-type'],
+        'translateTitle' => true,
+        'translateSlug' => true
+    ]
+];
 ```
 
-### Query language
+## Defining field types
 
-If you need a more complex logic or dynamic parent templates, you can use the query language.
+```php
+<?php
 
-```yaml
-# /site/blueprints/pages/project.yml
-title: Project
+class CustomField extends \Oweb\GoogleTranslate\Fields\Field
+{
+    public function value(): string|array
+    {
+        $value = $this->field()->value();
+        $result = $this->translate($value);
 
-options:
-  # parent pages collection where you can move this page
-  move: site.children.filterBy('template', 'in', ['projects', 'portfolio'])
+        return $this->save($result);
+    }
+
+    public function save($value)
+    {
+        return $value;
+    }
+}
+
+// /site/config/config.php
+return [
+    'owebstudio.google-translate' => [
+        'apiKey' => 'MY_GOOGLE_API_KEY',
+        'fieldTypes' => [
+            'custom' => CustomField::class
+        ]
+    ]
+];
 ```
 
-## Sample use case: shop
+_Field definition can only be done with classes. Field definition with `Closure` is not possible at the moment, but it
+can be considered in the future._
 
-For example, let's assume that there is a multi-category structure on a shop site. You want to move a product to another category.
-
-### Content directory
-
-- /home
-- /about
-- /shop
-    - /category-a
-        - Product A
-    - /category-b
-        - Product B
-    - /category-c
-        - Product C
-- /contact
-
-You can set `move` option with `category` template:
-
-```yaml
-# /site/blueprints/pages/product.yml
-title: Product item
-
-options:
-  move:
-    - category
-```
-
-Or you can use query language:
-
-```yaml
-# /site/blueprints/pages/product.yml
-title: Product item
-
-options:
-  move: kirby.page('shop').children
-```

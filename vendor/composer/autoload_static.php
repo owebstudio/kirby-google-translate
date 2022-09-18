@@ -1161,6 +1161,7 @@ class ComposerStaticInitcc195454211c7c3489fa1a993a3099bf
         'Oweb\\GoogleTranslate\\Fields' => __DIR__ . '/../..' . '/src/Fields.php',
         'Oweb\\GoogleTranslate\\Fields\\BlocksField' => __DIR__ . '/../..' . '/src/Fields/BlocksField.php',
         'Oweb\\GoogleTranslate\\Fields\\Field' => __DIR__ . '/../..' . '/src/Fields/Field.php',
+        'Oweb\\GoogleTranslate\\Fields\\LayoutField' => __DIR__ . '/../..' . '/src/Fields/LayoutField.php',
         'Oweb\\GoogleTranslate\\Fields\\ListField' => __DIR__ . '/../..' . '/src/Fields/ListField.php',
         'Oweb\\GoogleTranslate\\Fields\\StructureField' => __DIR__ . '/../..' . '/src/Fields/StructureField.php',
         'Oweb\\GoogleTranslate\\Fields\\TextField' => __DIR__ . '/../..' . '/src/Fields/TextField.php',
