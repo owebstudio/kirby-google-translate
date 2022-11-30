@@ -44,18 +44,27 @@ class ComposerStaticInitcc195454211c7c3489fa1a993a3099bf
             'GuzzleHttp\\' => 11,
             'Grpc\\Gcp\\' => 9,
             'Grpc\\' => 5,
+            'Google\\Type\\' => 12,
+            'Google\\Rpc\\' => 11,
             'Google\\Protobuf\\' => 16,
             'Google\\LongRunning\\' => 19,
+            'Google\\Iam\\' => 11,
             'Google\\Cloud\\Translate\\' => 23,
             'Google\\Cloud\\Core\\' => 18,
+            'Google\\Cloud\\' => 13,
             'Google\\Auth\\' => 12,
+            'Google\\Api\\' => 11,
             'Google\\ApiCore\\LongRunning\\' => 27,
             'Google\\ApiCore\\' => 15,
-            'Google\\' => 7,
+            'GPBMetadata\\Google\\Type\\' => 24,
+            'GPBMetadata\\Google\\Rpc\\' => 23,
             'GPBMetadata\\Google\\Protobuf\\' => 28,
             'GPBMetadata\\Google\\Longrunning\\' => 31,
+            'GPBMetadata\\Google\\Logging\\' => 27,
+            'GPBMetadata\\Google\\Iam\\' => 23,
             'GPBMetadata\\Google\\Cloud\\Translate\\' => 35,
-            'GPBMetadata\\Google\\' => 19,
+            'GPBMetadata\\Google\\Cloud\\' => 25,
+            'GPBMetadata\\Google\\Api\\' => 23,
             'GPBMetadata\\ApiCore\\' => 20,
         ),
         'F' => 
@@ -118,6 +127,14 @@ class ComposerStaticInitcc195454211c7c3489fa1a993a3099bf
         array (
             0 => __DIR__ . '/..' . '/grpc/grpc/src/lib',
         ),
+        'Google\\Type\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/src/Type',
+        ),
+        'Google\\Rpc\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/src/Rpc',
+        ),
         'Google\\Protobuf\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/protobuf/src/Google/Protobuf',
@@ -125,6 +142,10 @@ class ComposerStaticInitcc195454211c7c3489fa1a993a3099bf
         'Google\\LongRunning\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/longrunning/src/LongRunning',
+        ),
+        'Google\\Iam\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/src/Iam',
         ),
         'Google\\Cloud\\Translate\\' => 
         array (
@@ -134,9 +155,17 @@ class ComposerStaticInitcc195454211c7c3489fa1a993a3099bf
         array (
             0 => __DIR__ . '/..' . '/google/cloud-core/src',
         ),
+        'Google\\Cloud\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/src/Cloud',
+        ),
         'Google\\Auth\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/auth/src',
+        ),
+        'Google\\Api\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/src/Api',
         ),
         'Google\\ApiCore\\LongRunning\\' => 
         array (
@@ -146,9 +175,13 @@ class ComposerStaticInitcc195454211c7c3489fa1a993a3099bf
         array (
             0 => __DIR__ . '/..' . '/google/gax/src',
         ),
-        'Google\\' => 
+        'GPBMetadata\\Google\\Type\\' => 
         array (
-            0 => __DIR__ . '/..' . '/google/common-protos/src',
+            0 => __DIR__ . '/..' . '/google/common-protos/metadata/Type',
+        ),
+        'GPBMetadata\\Google\\Rpc\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/metadata/Rpc',
         ),
         'GPBMetadata\\Google\\Protobuf\\' => 
         array (
@@ -158,13 +191,25 @@ class ComposerStaticInitcc195454211c7c3489fa1a993a3099bf
         array (
             0 => __DIR__ . '/..' . '/google/longrunning/metadata/Longrunning',
         ),
+        'GPBMetadata\\Google\\Logging\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/metadata/Logging',
+        ),
+        'GPBMetadata\\Google\\Iam\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/metadata/Iam',
+        ),
         'GPBMetadata\\Google\\Cloud\\Translate\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/cloud-translate/metadata',
         ),
-        'GPBMetadata\\Google\\' => 
+        'GPBMetadata\\Google\\Cloud\\' => 
         array (
-            0 => __DIR__ . '/..' . '/google/common-protos/metadata',
+            0 => __DIR__ . '/..' . '/google/common-protos/metadata/Cloud',
+        ),
+        'GPBMetadata\\Google\\Api\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/metadata/Api',
         ),
         'GPBMetadata\\ApiCore\\' => 
         array (
@@ -535,6 +580,7 @@ class ComposerStaticInitcc195454211c7c3489fa1a993a3099bf
         'Google\\Auth\\Credentials\\AppIdentityCredentials' => __DIR__ . '/..' . '/google/auth/src/Credentials/AppIdentityCredentials.php',
         'Google\\Auth\\Credentials\\GCECredentials' => __DIR__ . '/..' . '/google/auth/src/Credentials/GCECredentials.php',
         'Google\\Auth\\Credentials\\IAMCredentials' => __DIR__ . '/..' . '/google/auth/src/Credentials/IAMCredentials.php',
+        'Google\\Auth\\Credentials\\ImpersonatedServiceAccountCredentials' => __DIR__ . '/..' . '/google/auth/src/Credentials/ImpersonatedServiceAccountCredentials.php',
         'Google\\Auth\\Credentials\\InsecureCredentials' => __DIR__ . '/..' . '/google/auth/src/Credentials/InsecureCredentials.php',
         'Google\\Auth\\Credentials\\ServiceAccountCredentials' => __DIR__ . '/..' . '/google/auth/src/Credentials/ServiceAccountCredentials.php',
         'Google\\Auth\\Credentials\\ServiceAccountJwtAccessCredentials' => __DIR__ . '/..' . '/google/auth/src/Credentials/ServiceAccountJwtAccessCredentials.php',
@@ -549,6 +595,7 @@ class ComposerStaticInitcc195454211c7c3489fa1a993a3099bf
         'Google\\Auth\\HttpHandler\\HttpClientCache' => __DIR__ . '/..' . '/google/auth/src/HttpHandler/HttpClientCache.php',
         'Google\\Auth\\HttpHandler\\HttpHandlerFactory' => __DIR__ . '/..' . '/google/auth/src/HttpHandler/HttpHandlerFactory.php',
         'Google\\Auth\\Iam' => __DIR__ . '/..' . '/google/auth/src/Iam.php',
+        'Google\\Auth\\IamSignerTrait' => __DIR__ . '/..' . '/google/auth/src/IamSignerTrait.php',
         'Google\\Auth\\Middleware\\AuthTokenMiddleware' => __DIR__ . '/..' . '/google/auth/src/Middleware/AuthTokenMiddleware.php',
         'Google\\Auth\\Middleware\\ProxyAuthTokenMiddleware' => __DIR__ . '/..' . '/google/auth/src/Middleware/ProxyAuthTokenMiddleware.php',
         'Google\\Auth\\Middleware\\ScopedAccessTokenMiddleware' => __DIR__ . '/..' . '/google/auth/src/Middleware/ScopedAccessTokenMiddleware.php',
