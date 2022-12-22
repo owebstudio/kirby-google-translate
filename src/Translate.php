@@ -2,6 +2,7 @@
 
 namespace Oweb\GoogleTranslate;
 
+use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page;
 use Kirby\Form\Form;
 use Kirby\Form\Fields as KirbyFields;
@@ -36,6 +37,9 @@ class Translate
 
     public static function values(KirbyFields $fields, Request $request): array
     {
+        $page = $request->page();
+        $overwrite = Kirby::instance()->option('owebstudio.google-translate.overwrite', false);
+
         $data = [];
 
         /** @var \Kirby\Form\Field $field */
@@ -45,6 +49,15 @@ class Translate
 
             // do not add disabled or non-translatable fields
             if ($field->disabled() === true || $field->translate() === false) {
+                continue;
+            }
+
+            // don't overwrite values if translated content exists and option disabled
+            if (
+                $overwrite === false &&
+                $page->translation($request->targetLanguage())->exists() === true &&
+                empty($page->content($request->targetLanguage())?->get($name)?->value()) === false
+            ) {
                 continue;
             }
 

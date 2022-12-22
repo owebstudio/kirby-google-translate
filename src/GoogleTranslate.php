@@ -2,6 +2,7 @@
 
 namespace Oweb\GoogleTranslate;
 
+use Exception;
 use InvalidArgumentException;
 use Kirby\Cms\App as Kirby;
 use Google\Cloud\Translate\V2\TranslateClient;
@@ -45,13 +46,31 @@ class GoogleTranslate
 
     public static function translateBatch(array $strings, string $language, string $format = 'text'): array
     {
-        $results = static::client()->translateBatch(array_values($strings), [
-            'format' => $format,
-            'target' => $language
-        ]);
+        try {
+            $results = static::client()
+                ->translateBatch(
+                    array_values($strings),
+                    [
+                        'format' => $format,
+                        'target' => $language
+                    ]
+                );
+        } catch (Exception $e) {
+            $errorMessage = 'Google Translation failed!';
+
+            if ($error = json_decode($e->getMessage(), true)) {
+                $errorMessage = $error['error']['message'] ?? $errorMessage;
+            }
+
+            throw new Exception($errorMessage);
+        }
 
         if (empty($results) === true) {
             throw new InvalidArgumentException('Google Translation failed!');
+        }
+
+        if (empty($results['error']) === false) {
+            throw new Exception($results['error']['message'] ?? 'Google Translation failed!');
         }
 
         return array_map(function ($result) {

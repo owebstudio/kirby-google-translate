@@ -2,8 +2,6 @@
 
 namespace Oweb\GoogleTranslate\Fields;
 
-use Oweb\GoogleTranslate\GoogleTranslate;
-
 /**
  * Text field
  *

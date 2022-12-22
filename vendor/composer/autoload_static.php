@@ -341,6 +341,7 @@ class ComposerStaticInitcc195454211c7c3489fa1a993a3099bf
         'Google\\ApiCore\\PollingTrait' => __DIR__ . '/..' . '/google/gax/src/PollingTrait.php',
         'Google\\ApiCore\\RequestBuilder' => __DIR__ . '/..' . '/google/gax/src/RequestBuilder.php',
         'Google\\ApiCore\\RequestParamsHeaderDescriptor' => __DIR__ . '/..' . '/google/gax/src/RequestParamsHeaderDescriptor.php',
+        'Google\\ApiCore\\ResourceHelperTrait' => __DIR__ . '/..' . '/google/gax/src/ResourceHelperTrait.php',
         'Google\\ApiCore\\ResourceTemplate\\AbsoluteResourceTemplate' => __DIR__ . '/..' . '/google/gax/src/ResourceTemplate/AbsoluteResourceTemplate.php',
         'Google\\ApiCore\\ResourceTemplate\\Parser' => __DIR__ . '/..' . '/google/gax/src/ResourceTemplate/Parser.php',
         'Google\\ApiCore\\ResourceTemplate\\RelativeResourceTemplate' => __DIR__ . '/..' . '/google/gax/src/ResourceTemplate/RelativeResourceTemplate.php',
