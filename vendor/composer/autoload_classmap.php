@@ -125,6 +125,7 @@ return array(
     'Google\\ApiCore\\PollingTrait' => $vendorDir . '/google/gax/src/PollingTrait.php',
     'Google\\ApiCore\\RequestBuilder' => $vendorDir . '/google/gax/src/RequestBuilder.php',
     'Google\\ApiCore\\RequestParamsHeaderDescriptor' => $vendorDir . '/google/gax/src/RequestParamsHeaderDescriptor.php',
+    'Google\\ApiCore\\ResourceHelperTrait' => $vendorDir . '/google/gax/src/ResourceHelperTrait.php',
     'Google\\ApiCore\\ResourceTemplate\\AbsoluteResourceTemplate' => $vendorDir . '/google/gax/src/ResourceTemplate/AbsoluteResourceTemplate.php',
     'Google\\ApiCore\\ResourceTemplate\\Parser' => $vendorDir . '/google/gax/src/ResourceTemplate/Parser.php',
     'Google\\ApiCore\\ResourceTemplate\\RelativeResourceTemplate' => $vendorDir . '/google/gax/src/ResourceTemplate/RelativeResourceTemplate.php',

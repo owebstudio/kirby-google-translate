@@ -65,13 +65,14 @@ Supports nested data/form structure, but has not been tested beyond 2 levels.
 
 ## Options
 
-| Option         | Type    | Default | Description                                                |
-|:---------------|:--------|:--------|:-----------------------------------------------------------|
-| apiKey         | string  | null    | Google Cloud Translate Api Key (required)                  |
-| fieldTypes     | array   | []      | Determines the field types you want to be translated.      |
-| blockTypes     | array   | []      | Determines the blocks types you want to be translated.     |
-| translateTitle | boolean | true    | When enabled, the title is translated along with the page. |
-| translateSlug  | boolean | true    | When enabled, the slug is translated along with the page.  |
+| Option         | Type    | Default | Description                                                            |
+|:---------------|:--------|:--------|:-----------------------------------------------------------------------|
+| apiKey         | string  | null    | Google Cloud Translate Api Key (required)                              |
+| fieldTypes     | array   | []      | Determines the field types you want to be translated.                  |
+| blockTypes     | array   | []      | Determines the blocks types you want to be translated.                 |
+| overwrite      | boolean | false   | If this option is disabled, it will not translate fields with content. |
+| translateTitle | boolean | true    | When enabled, the title is translated along with the page.             |
+| translateSlug  | boolean | true    | When enabled, the slug is translated along with the page.              |
 
 All options optional and the values can be updated in the `config.php` file and prefixed with `owebstudio.google-translate.`.
 
