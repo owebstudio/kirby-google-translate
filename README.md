@@ -69,8 +69,8 @@ Supports nested data/form structure, but has not been tested beyond 2 levels.
 |:---------------|:--------|:--------|:-----------------------------------------------------------------------|
 | apiKey         | string  | null    | Google Cloud Translate Api Key (required)                              |
 | fieldTypes     | array   | []      | Determines the field types you want to be translated.                  |
-| blockTypes     | array   | []      | Determines the blocks types you want to be translated.                 |
-| overwrite      | boolean | false   | If this option is disabled, it will not translate fields with content. |
+| blockTypes     | array   | []      | Additional block types to translate, next to the core block types.     |
+| overwrite      | boolean | false   | If disabled, already translated fields, title and slug are kept.       |
 | translateTitle | boolean | true    | When enabled, the title is translated along with the page.             |
 | translateSlug  | boolean | true    | When enabled, the slug is translated along with the page.              |
 

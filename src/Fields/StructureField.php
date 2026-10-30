@@ -20,7 +20,7 @@ class StructureField extends Field
         $data = [];
 
         foreach ($this->field()->value() as $value) {
-            $fields = $this->field()->form($value)->fields();
+            $fields = $this->fill($this->field()->form($value), $value)->fields();
             $data[] = Translate::values($fields, $this->request());
         }
 
@@ -29,12 +29,6 @@ class StructureField extends Field
 
     public function save($value)
     {
-        $data = [];
-
-        foreach ($value as $row) {
-            $data[] = $this->field()->form($row)->content();
-        }
-
-        return $data;
+        return $value;
     }
 }

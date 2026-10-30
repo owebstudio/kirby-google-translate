@@ -24,6 +24,7 @@ class Request
     protected Page $page;
     protected string $sourceLanguage;
     protected string $targetLanguage;
+    protected array $translation;
 
     public function __construct(string $path)
     {
@@ -55,6 +56,7 @@ class Request
 
         $this->sourceLanguage = $kirby->defaultLanguage()->code();
         $this->targetLanguage = $kirby->language()->code();
+        $this->translation = $this->readTranslation();
     }
 
     public function translate(): Page
@@ -86,21 +88,47 @@ class Request
         return $this->targetLanguage;
     }
 
+    /**
+     * Checks if the target language had its own value for the field
+     * before the translation, without the fallback to the default language
+     */
+    public function translated(string $field): bool
+    {
+        return empty($this->translation[strtolower($field)] ?? null) === false;
+    }
+
+    /**
+     * Reads the stored content of the target language
+     */
+    protected function readTranslation(): array
+    {
+        // Kirby 5+
+        if (method_exists($this->page, 'version') === true) {
+            return $this->page->version()->read($this->targetLanguage()) ?? [];
+        }
+
+        return $this->page->readContent($this->targetLanguage());
+    }
+
     protected function translateTitleSlug(): void
     {
+        $overwrite = Kirby::instance()->option('owebstudio.google-translate.overwrite', false);
         $permissions = $this->page->permissions();
 
         if (
             Kirby::instance()->option('owebstudio.google-translate.translateTitle', true) === true &&
+            ($overwrite === true || $this->translated('title') === false) &&
             $permissions->can('changeTitle') === true
         ) {
-            $translatedTitle = GoogleTranslate::translate($this->page()->title()->value(), $this->targetLanguage());
+            $title = $this->page()->content($this->sourceLanguage())->get('title')->value();
+            $translatedTitle = GoogleTranslate::translate($title, $this->targetLanguage());
 
             if (empty($translatedTitle) === false) {
                 $this->page = $this->page->changeTitle($translatedTitle, $this->targetLanguage());
 
                 if (
                     Kirby::instance()->option('owebstudio.google-translate.translateSlug', true) === true &&
+                    ($overwrite === true || $this->translated('slug') === false) &&
                     $permissions->can('changeSlug') === true
                 ) {
                     $this->page = $this->page->changeSlug(Str::slug($translatedTitle), $this->targetLanguage());

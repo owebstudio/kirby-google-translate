@@ -22,7 +22,7 @@ class BlocksField extends Field
 
         $coreBlockTypes = ['heading', 'list', 'markdown', 'quote', 'text'];
         $allowedBlockTypes = Kirby::instance()->option('owebstudio.google-translate.blockTypes', []);
-        $blockTypes = array_replace($coreBlockTypes, $allowedBlockTypes);
+        $blockTypes = array_merge($coreBlockTypes, $allowedBlockTypes);
 
         foreach ($value as &$block) {
             $type = $block['type'];
@@ -30,7 +30,7 @@ class BlocksField extends Field
             // only allowed block types will translated
             if (in_array($type, $blockTypes) === true) {
                 $blockFields = $this->field()->fields($block['type']);
-                $fields = $this->field()->form($blockFields, $block['content'])->fields();
+                $fields = $this->fill($this->field()->form($blockFields, $block['content']), $block['content'])->fields();
 
                 $block['content'] = Translate::values($fields, $this->request());
             }
@@ -41,6 +41,6 @@ class BlocksField extends Field
 
     public function save($value)
     {
-        return $this->field()->store($value);
+        return $value;
     }
 }
