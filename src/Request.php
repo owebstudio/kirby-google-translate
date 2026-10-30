@@ -112,19 +112,23 @@ class Request
 
     protected function translateTitleSlug(): void
     {
+        $overwrite = Kirby::instance()->option('owebstudio.google-translate.overwrite', false);
         $permissions = $this->page->permissions();
 
         if (
             Kirby::instance()->option('owebstudio.google-translate.translateTitle', true) === true &&
+            ($overwrite === true || $this->translated('title') === false) &&
             $permissions->can('changeTitle') === true
         ) {
-            $translatedTitle = GoogleTranslate::translate($this->page()->title()->value(), $this->targetLanguage());
+            $title = $this->page()->content($this->sourceLanguage())->get('title')->value();
+            $translatedTitle = GoogleTranslate::translate($title, $this->targetLanguage());
 
             if (empty($translatedTitle) === false) {
                 $this->page = $this->page->changeTitle($translatedTitle, $this->targetLanguage());
 
                 if (
                     Kirby::instance()->option('owebstudio.google-translate.translateSlug', true) === true &&
+                    ($overwrite === true || $this->translated('slug') === false) &&
                     $permissions->can('changeSlug') === true
                 ) {
                     $this->page = $this->page->changeSlug(Str::slug($translatedTitle), $this->targetLanguage());
