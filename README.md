@@ -1,3 +1,5 @@
+![Google Translate, a Kirby plugin by oweb studio. Translate your pages instantly in the Panel.](.github/cover.png)
+
 # 🌐 Kirby Google Translate
 
 [![Buy a license: €29.99](https://img.shields.io/badge/Buy_a_license-%E2%82%AC29.99-2ea44f?style=for-the-badge)](https://owebstudio.lemonsqueezy.com/checkout/buy/2a631542-2793-4e73-bdf1-fa33d7b6bce8)
