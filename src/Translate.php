@@ -36,7 +36,6 @@ class Translate
 
     public static function values(KirbyFields $fields, Request $request, bool $nested = true): array
     {
-        $page = $request->page();
         $overwrite = Kirby::instance()->option('owebstudio.google-translate.overwrite', false);
 
         $data = [];
@@ -56,8 +55,7 @@ class Translate
             if (
                 $nested === false &&
                 $overwrite === false &&
-                $page->translation($request->targetLanguage())->exists() === true &&
-                empty($page->content($request->targetLanguage())?->get($name)?->value()) === false
+                $request->translated($name) === true
             ) {
                 continue;
             }

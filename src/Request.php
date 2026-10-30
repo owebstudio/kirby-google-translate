@@ -24,6 +24,7 @@ class Request
     protected Page $page;
     protected string $sourceLanguage;
     protected string $targetLanguage;
+    protected array $translation;
 
     public function __construct(string $path)
     {
@@ -55,6 +56,7 @@ class Request
 
         $this->sourceLanguage = $kirby->defaultLanguage()->code();
         $this->targetLanguage = $kirby->language()->code();
+        $this->translation = $this->readTranslation();
     }
 
     public function translate(): Page
@@ -84,6 +86,28 @@ class Request
     public function targetLanguage(): string
     {
         return $this->targetLanguage;
+    }
+
+    /**
+     * Checks if the target language had its own value for the field
+     * before the translation, without the fallback to the default language
+     */
+    public function translated(string $field): bool
+    {
+        return empty($this->translation[strtolower($field)] ?? null) === false;
+    }
+
+    /**
+     * Reads the stored content of the target language
+     */
+    protected function readTranslation(): array
+    {
+        // Kirby 5+
+        if (method_exists($this->page, 'version') === true) {
+            return $this->page->version()->read($this->targetLanguage()) ?? [];
+        }
+
+        return $this->page->readContent($this->targetLanguage());
     }
 
     protected function translateTitleSlug(): void
