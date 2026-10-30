@@ -2,7 +2,10 @@
 
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Find;
+use Kirby\Exception\PermissionException;
+use Kirby\Toolkit\Escape;
 use Kirby\Toolkit\I18n;
+use Oweb\GoogleTranslate\License\License;
 use Oweb\GoogleTranslate\Request;
 
 return [
@@ -66,6 +69,32 @@ return [
                         // checks the api key, language, page options and permissions
                         new Request($path);
 
+                        $license = License::for('owebstudio/google-translate')->panel();
+
+                        // show the license notice instead of the translation
+                        if ($license['locked'] === true) {
+                            return [
+                                'component' => 'k-form-dialog',
+                                'props' => [
+                                    'fields' => [
+                                        'license' => [
+                                            'type' => 'info',
+                                            'theme' => $license['theme'],
+                                            'text' => Escape::html($license['message'])
+                                        ]
+                                    ],
+                                    'size' => 'medium',
+                                    // admins can open the license dialog
+                                    'submitButton' => $license['dialog'] !== null ? [
+                                        'dialog' => $license['dialog'],
+                                        'icon' => 'key',
+                                        'text' => $license['button'],
+                                        'type' => 'button'
+                                    ] : false
+                                ]
+                            ];
+                        }
+
                         return [
                             'component' => 'k-text-dialog',
                             'props' => [
@@ -77,6 +106,13 @@ return [
                         ];
                     },
                     'submit' => function (string $path) use ($kirby) {
+                        $license = License::for('owebstudio/google-translate');
+
+                        // never call the Google API without a license
+                        if ($license->isLocked() === true) {
+                            throw new PermissionException($license->message());
+                        }
+
                         $request = new Request($path);
                         $page = $request->translate();
 

@@ -1,6 +1,9 @@
 <?php
 
 use Kirby\Cms\App as Kirby;
+use Oweb\GoogleTranslate\License\License;
+
+require_once __DIR__ . '/lib/license/autoload.php';
 
 load([
     'Oweb\\GoogleTranslate\\Fields' => 'src/Fields.php',
@@ -17,8 +20,15 @@ load([
     'Oweb\\GoogleTranslate\\Translate' => 'src/Translate.php',
 ], __DIR__);
 
-Kirby::plugin('owebstudio/google-translate', [
+$license = new License(
+    plugin: 'owebstudio/google-translate',
+    products: [16242],
+    name: 'Google Translate',
+    url: 'https://owebstudio.com/kirby/plugins/google-translate'
+);
+
+Kirby::plugin('owebstudio/google-translate', $license->extend([
     'areas' => include __DIR__ . '/config/areas.php',
     'options' => include __DIR__ . '/config/options.php',
     'translations' => include __DIR__ . '/config/translations.php'
-]);
+]), ...$license->args());
