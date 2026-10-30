@@ -7,6 +7,7 @@ use Oweb\GoogleTranslate\GoogleTranslate;
 use Oweb\GoogleTranslate\Request;
 use Kirby\Form\Field as KirbyField;
 use Kirby\Form\FieldClass;
+use Kirby\Form\Form;
 
 /**
  * Field package
@@ -66,5 +67,18 @@ abstract class Field
     public function translateBatch(array $strings): array
     {
         return GoogleTranslate::translateBatch($strings, $this->targetLanguage(), $this->format);
+    }
+
+    /**
+     * Fills a form of nested fields with the given values.
+     * The core form helpers only take the values on Kirby 4.
+     */
+    public function fill(Form $form, array $values): Form
+    {
+        if (method_exists($form, 'fill') === true) {
+            $form->fill($values);
+        }
+
+        return $form;
     }
 }

@@ -33,7 +33,7 @@ class LayoutField extends Field
                     // only allowed block types will translated
                     if (in_array($type, $blockTypes) === true) {
                         $blockFields = $field->fields($block['type']);
-                        $fields = $field->form($blockFields, $block['content'])->fields();
+                        $fields = $this->fill($field->form($blockFields, $block['content']), $block['content'])->fields();
 
                         $content = Translate::values($fields, $this->request());
                         $value[$lIndex]['columns'][$cIndex]['blocks'][$bIndex]['content'] = $content;
@@ -47,6 +47,6 @@ class LayoutField extends Field
 
     public function save($value)
     {
-        return $this->field()->store($value);
+        return $value;
     }
 }
