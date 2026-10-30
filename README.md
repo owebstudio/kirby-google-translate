@@ -131,3 +131,16 @@ return [
 
 _Field definition can only be done with classes. Field definition with `Closure` is not possible at the moment, but it can be considered in the future._
 
+## License
+
+Google Translate is a commercial plugin. It is free to use on your local computer and on staging sites. A live site needs
+a license key: buy it on [owebstudio.com](https://owebstudio.com/kirby/plugins/google-translate) and activate it in the
+Panel with the button in the translate dialog, or in the System view (Kirby 5 and newer) by clicking the license status
+of the plugin.
+
+Without a license key, the translate dialog shows a notice on a live site and no page is sent to Google. Your website
+keeps working.
+
+[oweb studio Commercial License](LICENSE.md). Versions released under the MIT license stay MIT. The current license is
+available at https://owebstudio.com/license.
+
