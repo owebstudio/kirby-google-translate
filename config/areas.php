@@ -40,6 +40,11 @@ return [
                             return $dropdown;
                         }
 
+                        // user is not allowed to update the page
+                        if ($page->permissions()->can('update') === false) {
+                            return $dropdown;
+                        }
+
                         // append a separator
                         $dropdown[] = '-';
 
@@ -57,18 +62,9 @@ return [
             'dialogs' => [
                 'page.translate' => [
                     'pattern' => 'pages/(:any)/translate',
-                    'load' => function (string $path) use ($kirby) {
-                        // check translate api key
-                        if (empty($kirby->option('owebstudio.google-translate.apiKey')) === true) {
-                            throw new InvalidArgumentException('Google Translation API KEY not defined yet!');
-                        }
-
-                        $page = Find::page($path);
-                        $translate = $page->blueprint()->options()['translate'] ?? false;
-
-                        if ($translate === false) {
-                            throw new InvalidArgumentException('Google Translation setting disabled for the page!');
-                        }
+                    'load' => function (string $path) {
+                        // checks the api key, language, page options and permissions
+                        new Request($path);
 
                         return [
                             'component' => 'k-text-dialog',

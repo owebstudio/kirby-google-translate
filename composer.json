@@ -41,8 +41,7 @@
   "require": {
     "php": "^8.0",
     "ext-iconv": "*",
-    "getkirby/composer-installer": "^1.2",
-    "google/cloud-translate": "^1.12"
+    "getkirby/composer-installer": "^1.2"
   },
   "extra": {
     "installer-name": "kirby-google-translate"
