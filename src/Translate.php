@@ -6,7 +6,6 @@ use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page;
 use Kirby\Form\Form;
 use Kirby\Form\Fields as KirbyFields;
-use Google\Cloud\Translate\V2\Translaterequest;
 
 /**
  * Kirby Google Translate Package

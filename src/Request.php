@@ -8,7 +8,6 @@ use Kirby\Cms\Find;
 use Kirby\Cms\Page;
 use Kirby\Exception\PermissionException;
 use Kirby\Form\Form;
-use Google\Cloud\Translate\V2\TranslateClient;
 use Kirby\Toolkit\Str;
 
 /**
@@ -23,7 +22,6 @@ use Kirby\Toolkit\Str;
 class Request
 {
     protected Page $page;
-    protected TranslateClient $client;
     protected string $sourceLanguage;
     protected string $targetLanguage;
 
