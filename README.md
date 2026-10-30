@@ -1,8 +1,8 @@
 # 🌐 Kirby Google Translate
 
-Google Translate integration for Kirby 3.
+Google Translate integration for Kirby.
 
-This plugin provides [Google Cloud Translation](https://cloud.google.com/translate) V2 API integration for Kirby 3 pages. It makes instant translation and updates the contents of the relevant language.
+This plugin provides [Google Cloud Translation](https://cloud.google.com/translate) V2 API integration for Kirby pages. It makes instant translation and updates the contents of the relevant language.
 
 ![google-translate-3](https://user-images.githubusercontent.com/3393422/190928416-e4c832a5-d38b-4670-848b-edbc2a4315c2.gif)
 
@@ -14,8 +14,8 @@ This plugin provides [Google Cloud Translation](https://cloud.google.com/transla
 
 ## Requirements
 
-- Kirby 3.7+
-- PHP 8.0+
+- Kirby 4 or 5 (for Kirby 3, use [1.1.0](https://github.com/owebstudio/kirby-google-translate/releases/tag/1.1.0))
+- PHP 8.1+
 - Google Cloud Translation API KEY
 
 ## Usage
@@ -130,4 +130,17 @@ return [
 ```
 
 _Field definition can only be done with classes. Field definition with `Closure` is not possible at the moment, but it can be considered in the future._
+
+## License
+
+Google Translate is a commercial plugin. It is free to use on your local computer and on staging sites. A live site needs
+a license key: buy it on [owebstudio.com](https://owebstudio.com/kirby/plugins/google-translate) and activate it in the
+Panel with the button in the translate dialog, or in the System view (Kirby 5 and newer) by clicking the license status
+of the plugin.
+
+Without a license key, the translate dialog shows a notice on a live site and no page is sent to Google. Your website
+keeps working.
+
+[oweb studio Commercial License](LICENSE.md). Versions released under the MIT license stay MIT. The current license is
+available at https://owebstudio.com/license.
 
