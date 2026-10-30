@@ -23,7 +23,7 @@ class LayoutField extends Field
 
         $coreBlockTypes = ['heading', 'list', 'markdown', 'quote', 'text'];
         $allowedBlockTypes = Kirby::instance()->option('owebstudio.google-translate.blockTypes', []);
-        $blockTypes = array_replace($coreBlockTypes, $allowedBlockTypes);
+        $blockTypes = array_merge($coreBlockTypes, $allowedBlockTypes);
 
         foreach ($value as $lIndex => $layout) {
             foreach ($layout['columns'] ?? [] as $cIndex => $column) {

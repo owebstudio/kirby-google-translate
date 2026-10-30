@@ -22,7 +22,7 @@ class BlocksField extends Field
 
         $coreBlockTypes = ['heading', 'list', 'markdown', 'quote', 'text'];
         $allowedBlockTypes = Kirby::instance()->option('owebstudio.google-translate.blockTypes', []);
-        $blockTypes = array_replace($coreBlockTypes, $allowedBlockTypes);
+        $blockTypes = array_merge($coreBlockTypes, $allowedBlockTypes);
 
         foreach ($value as &$block) {
             $type = $block['type'];
