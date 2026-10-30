@@ -144,5 +144,5 @@ Without a license key, the translate dialog shows a notice on a live site and no
 keeps working.
 
 [oweb studio Commercial License](LICENSE.md). Versions released under the MIT license stay MIT. The current license is
-available at https://owebstudio.com/license.
+available at https://github.com/owebstudio/.github/blob/main/LICENSE.md.
 
