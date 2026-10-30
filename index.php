@@ -24,7 +24,7 @@ $license = new License(
     plugin: 'owebstudio/google-translate',
     products: [16242],
     name: 'Google Translate',
-    url: 'https://owebstudio.com/kirby/plugins/google-translate'
+    url: 'https://owebstudio.lemonsqueezy.com/checkout/buy/2a631542-2793-4e73-bdf1-fa33d7b6bce8'
 );
 
 Kirby::plugin('owebstudio/google-translate', $license->extend([
