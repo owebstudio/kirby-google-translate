@@ -2,7 +2,6 @@
   "name": "owebstudio/kirby-google-translate",
   "description": "Google Translate integration for Kirby.",
   "type": "kirby-plugin",
-  "version": "1.1.0",
   "license": "proprietary",
   "keywords": [
     "owebstudio",
@@ -57,6 +56,5 @@
       "compatible": "^4.0 || ^5.0"
     }
   },
-  "minimum-stability": "dev",
   "prefer-stable": true
 }
