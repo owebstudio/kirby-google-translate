@@ -1,5 +1,7 @@
 # 🌐 Kirby Google Translate
 
+[![Buy a license: €29.99](https://img.shields.io/badge/Buy_a_license-%E2%82%AC29.99-2ea44f?style=for-the-badge)](https://owebstudio.lemonsqueezy.com/checkout/buy/2a631542-2793-4e73-bdf1-fa33d7b6bce8)
+
 Google Translate integration for Kirby.
 
 This plugin provides [Google Cloud Translation](https://cloud.google.com/translate) V2 API integration for Kirby pages. It makes instant translation and updates the contents of the relevant language.
@@ -134,9 +136,9 @@ _Field definition can only be done with classes. Field definition with `Closure`
 ## License
 
 Google Translate is a commercial plugin. It is free to use on your local computer and on staging sites. A live site needs
-a license key: buy it on [owebstudio.com](https://owebstudio.com/kirby/plugins/google-translate) and activate it in the
-Panel with the button in the translate dialog, or in the System view (Kirby 5 and newer) by clicking the license status
-of the plugin.
+a license key: [buy a license](https://owebstudio.lemonsqueezy.com/checkout/buy/2a631542-2793-4e73-bdf1-fa33d7b6bce8)
+(€29.99) and activate it in the Panel with the button in the translate dialog, or in the System view (Kirby 5 and newer)
+by clicking the license status of the plugin.
 
 Without a license key, the translate dialog shows a notice on a live site and no page is sent to Google. Your website
 keeps working.
