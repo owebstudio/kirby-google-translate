@@ -1,8 +1,8 @@
 # 🌐 Kirby Google Translate
 
-Google Translate integration for Kirby 3.
+Google Translate integration for Kirby.
 
-This plugin provides [Google Cloud Translation](https://cloud.google.com/translate) V2 API integration for Kirby 3 pages. It makes instant translation and updates the contents of the relevant language.
+This plugin provides [Google Cloud Translation](https://cloud.google.com/translate) V2 API integration for Kirby pages. It makes instant translation and updates the contents of the relevant language.
 
 ![google-translate-3](https://user-images.githubusercontent.com/3393422/190928416-e4c832a5-d38b-4670-848b-edbc2a4315c2.gif)
 
@@ -14,8 +14,8 @@ This plugin provides [Google Cloud Translation](https://cloud.google.com/transla
 
 ## Requirements
 
-- Kirby 3.7+
-- PHP 8.0+
+- Kirby 4 or 5 (for Kirby 3, use [1.1.0](https://github.com/owebstudio/kirby-google-translate/releases/tag/1.1.0))
+- PHP 8.1+
 - Google Cloud Translation API KEY
 
 ## Usage
