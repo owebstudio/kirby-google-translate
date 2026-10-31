@@ -48,10 +48,10 @@ class Request
 
         // check the permission before the paid API is called
         if ($this->page->permissions()->can('update') === false) {
-            throw new PermissionException([
-                'key'  => 'page.update.permission',
-                'data' => ['slug' => $this->page->slug()]
-            ]);
+            throw new PermissionException(
+                key: 'page.update.permission',
+                data: ['slug' => $this->page->slug()]
+            );
         }
 
         $this->sourceLanguage = $kirby->defaultLanguage()->code();
