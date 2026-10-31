@@ -32,12 +32,12 @@ class Translate
     }
 
     /**
-     * Returns the form of the page in the source language
+     * Returns the form of the page, site or user in the source language
      */
     public function form(): Form
     {
         return Form::for(
-            model: $this->request->page(),
+            model: $this->request->model(),
             language: $this->request->sourceLanguage()
         );
     }

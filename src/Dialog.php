@@ -5,6 +5,8 @@ namespace Oweb\GoogleTranslate;
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page;
 use Kirby\Cms\Pages;
+use Kirby\Cms\Site;
+use Kirby\Cms\User;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Exception\PermissionException;
 use Kirby\Toolkit\Escape;
@@ -82,7 +84,7 @@ class Dialog
             ]
         ];
 
-        $subpages = static::subpages($request->page())->count();
+        $subpages = $request->page() !== null ? static::subpages($request->page())->count() : 0;
 
         if ($subpages > 0) {
             $fields['subpages'] = [
@@ -111,7 +113,7 @@ class Dialog
         ];
     }
 
-    public static function submit(string $path): array
+    public static function submit(Page|Site|User $model): array
     {
         $kirby = Kirby::instance();
         $license = License::for('owebstudio/google-translate');
@@ -134,36 +136,60 @@ class Dialog
 
         $requests = [
             new Request(
-                page: $path,
+                model: $model,
                 fields: $fields,
                 overwrite: $overwrite
             )
         ];
 
-        if (filter_var($kirby->request()->get('subpages', false), FILTER_VALIDATE_BOOLEAN) === true) {
+        if (
+            $model instanceof Page &&
+            filter_var($kirby->request()->get('subpages', false), FILTER_VALIDATE_BOOLEAN) === true
+        ) {
             // subpages are translated with all their fields, the title
             // and slug only if they are translated for the page as well
             $except = array_diff(['title', 'slug'], array_map('strtolower', $fields));
 
-            foreach (static::subpages($requests[0]->page()) as $subpage) {
+            foreach (static::subpages($model) as $subpage) {
                 $requests[] = new Request(
-                    page: $subpage,
+                    model: $subpage,
                     overwrite: $overwrite,
                     except: $except
                 );
             }
         }
 
-        $pages = Request::translateAll($requests);
+        $models = Request::translateAll($requests);
         $response = [
-            'redirect' => $pages[0]->panel()->url()
+            'event' => $model::CLASS_ALIAS . '.translate'
         ];
 
-        if (count($pages) > 1) {
-            $response['message'] = I18n::template('owebstudio.google-translate.translated', ['count' => count($pages)]);
+        if ($model instanceof Page) {
+            $response['redirect'] = $models[0]->panel()->url();
+        }
+
+        if (count($models) > 1) {
+            $response['message'] = I18n::template('owebstudio.google-translate.translated', ['count' => count($models)]);
         }
 
         return $response;
+    }
+
+    /**
+     * Returns the dropdown option or view button that opens the dialog,
+     * or `null` if the current user cannot translate the page, site or user
+     */
+    public static function button(Page|Site|User $model): array|null
+    {
+        if (Request::isTranslatable($model) === false) {
+            return null;
+        }
+
+        return [
+            'dialog' => $model->panel()->url(true) . '/translate',
+            'icon' => 'globe',
+            'text' => I18n::translate('owebstudio.google-translate.translate')
+        ];
     }
 
     /**
