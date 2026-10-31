@@ -8,6 +8,7 @@ use Kirby\Cms\Page;
 use Kirby\Exception\LogicException;
 use Kirby\Exception\PermissionException;
 use Kirby\Form\Form;
+use Kirby\Toolkit\I18n;
 use Kirby\Toolkit\Str;
 
 /**
@@ -25,9 +26,20 @@ class Request
     protected string $sourceLanguage;
     protected string $targetLanguage;
     protected array $translation;
+    protected array|null $fields;
+    protected bool $overwrite;
 
-    public function __construct(string $path)
-    {
+    /**
+     * @param array|null $fields Names of the fields to translate, including
+     *                           `title` and `slug`, or `null` for all fields
+     * @param bool|null $overwrite If already translated fields are translated
+     *                             again, `null` for the `overwrite` option
+     */
+    public function __construct(
+        string $path,
+        array|null $fields = null,
+        bool|null $overwrite = null
+    ) {
         $kirby = Kirby::instance();
 
         // check translate api key
@@ -66,6 +78,8 @@ class Request
         $this->sourceLanguage = $kirby->defaultLanguage()->code();
         $this->targetLanguage = $kirby->language()->code();
         $this->translation = $this->readTranslation();
+        $this->fields = $fields !== null ? array_map('strtolower', $fields) : null;
+        $this->overwrite = $overwrite ?? ($kirby->option('owebstudio.google-translate.overwrite', false) === true);
     }
 
     public function translate(): Page
@@ -75,7 +89,7 @@ class Request
         // collect all texts first to translate them in as few requests as possible
         GoogleTranslate::prefetch(function () use ($translate) {
             $translate->run();
-            $this->translateTitle();
+            $this->translateSlug($this->translateTitle());
         });
 
         $content = $translate->run();
@@ -102,9 +116,50 @@ class Request
         return $page->permissions()->can($action);
     }
 
+    /**
+     * Returns the labels of all fields that can be translated,
+     * including the title and slug, by field name
+     */
+    public function labels(): array
+    {
+        $labels = [];
+
+        if ($this->allows('title') === true) {
+            $labels['title'] = I18n::translate('title');
+        }
+
+        if ($this->allows('slug') === true) {
+            $labels['slug'] = I18n::translate('slug');
+        }
+
+        foreach ((new Translate($this))->form()->fields() as $field) {
+            if (Translate::accepts($field) === true) {
+                $labels[$field->name()] = $field->label() ?? Str::ucfirst($field->name());
+            }
+        }
+
+        return $labels;
+    }
+
+    /**
+     * Checks if already translated fields are translated again
+     */
+    public function overwrite(): bool
+    {
+        return $this->overwrite;
+    }
+
     public function page(): Page
     {
         return $this->page;
+    }
+
+    /**
+     * Checks if the field is one of the fields to translate
+     */
+    public function selected(string $field): bool
+    {
+        return $this->fields === null || in_array(strtolower($field), $this->fields, true) === true;
     }
 
     public function sourceLanguage(): string
@@ -127,6 +182,25 @@ class Request
     }
 
     /**
+     * Checks if the plugin options and the permissions
+     * of the user allow to translate the title or slug
+     */
+    protected function allows(string $field): bool
+    {
+        $kirby = Kirby::instance();
+
+        return match ($field) {
+            'title' =>
+                $kirby->option('owebstudio.google-translate.translateTitle', true) === true &&
+                static::can($this->page, 'changeTitle') === true,
+            'slug' =>
+                $kirby->option('owebstudio.google-translate.translateSlug', true) === true &&
+                static::can($this->page, 'changeSlug') === true,
+            default => false
+        };
+    }
+
+    /**
      * Reads the stored content of the target language
      */
     protected function readTranslation(): array
@@ -135,18 +209,23 @@ class Request
     }
 
     /**
+     * Checks if the title or slug is translated in this request
+     */
+    protected function translates(string $field): bool
+    {
+        return
+            $this->selected($field) === true &&
+            ($this->overwrite === true || $this->translated($field) === false) &&
+            $this->allows($field) === true;
+    }
+
+    /**
      * Returns the translated title,
      * or `null` if the title is not translated
      */
     protected function translateTitle(): string|null
     {
-        $overwrite = Kirby::instance()->option('owebstudio.google-translate.overwrite', false);
-
-        if (
-            Kirby::instance()->option('owebstudio.google-translate.translateTitle', true) === true &&
-            ($overwrite === true || $this->translated('title') === false) &&
-            static::can($this->page, 'changeTitle') === true
-        ) {
+        if ($this->translates('title') === true) {
             $title = $this->page()->content($this->sourceLanguage())->get('title')->value();
             return GoogleTranslate::translate($title, $this->targetLanguage());
         }
@@ -154,21 +233,39 @@ class Request
         return null;
     }
 
+    /**
+     * Returns the slug for the new or the already translated title,
+     * or `null` if the slug is not translated
+     */
+    protected function translateSlug(string|null $title): string|null
+    {
+        if ($this->translates('slug') === true) {
+            if (empty($title) === true && $this->translated('title') === true) {
+                $title = $this->translation['title'];
+            }
+
+            if (empty($title) === true) {
+                $title = $this->page()->content($this->sourceLanguage())->get('title')->value();
+                $title = GoogleTranslate::translate($title, $this->targetLanguage());
+            }
+
+            return Str::slug($title);
+        }
+
+        return null;
+    }
+
     protected function translateTitleSlug(): void
     {
-        $overwrite = Kirby::instance()->option('owebstudio.google-translate.overwrite', false);
-        $translatedTitle = $this->translateTitle();
+        $title = $this->translateTitle();
+        $slug = $this->translateSlug($title);
 
-        if (empty($translatedTitle) === false) {
-            $this->page = $this->page->changeTitle($translatedTitle, $this->targetLanguage());
+        if (empty($title) === false) {
+            $this->page = $this->page->changeTitle($title, $this->targetLanguage());
+        }
 
-            if (
-                Kirby::instance()->option('owebstudio.google-translate.translateSlug', true) === true &&
-                ($overwrite === true || $this->translated('slug') === false) &&
-                static::can($this->page, 'changeSlug') === true
-            ) {
-                $this->page = $this->page->changeSlug(Str::slug($translatedTitle), $this->targetLanguage());
-            }
+        if (empty($slug) === false) {
+            $this->page = $this->page->changeSlug($slug, $this->targetLanguage());
         }
     }
 }
