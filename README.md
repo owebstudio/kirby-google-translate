@@ -6,7 +6,7 @@
 
 Google Translate integration for Kirby.
 
-This plugin provides [Google Cloud Translation](https://cloud.google.com/translate) V2 API integration for Kirby pages. It makes instant translation and updates the contents of the relevant language.
+This plugin provides [Google Cloud Translation](https://cloud.google.com/translate) V2 API integration for Kirby pages, the site and users. It makes instant translation and updates the contents of the relevant language.
 
 ![google-translate-3](https://user-images.githubusercontent.com/3393422/190928416-e4c832a5-d38b-4670-848b-edbc2a4315c2.gif)
 
@@ -29,6 +29,44 @@ After you get the Google API KEY and set it from the config file, enable the tra
 ```yaml
 # /site/blueprints/pages/post.yml
 title: Post
+
+options:
+  translate: true
+```
+
+Switch the Panel to a secondary language and choose **Translate** in the settings dropdown of the page. The content of the default language is translated into the current language. In the dialog, you can:
+
+- choose the fields to translate, including the title and the URL appendix,
+- overwrite fields that are already translated (they are kept by default),
+- translate all subpages and drafts of the page as well. All fields of the subpages are translated, the choice for the title and URL appendix and the overwrite option apply to them too. Subpages without `translate: true` in their blueprint or without the permission to update them are skipped.
+
+### Site
+
+Enable the translation in the site blueprint and add the `google-translate` button to the buttons of the site view:
+
+```yaml
+# /site/blueprints/site.yml
+title: Site
+
+options:
+  translate: true
+
+buttons:
+  - open
+  - preview
+  - google-translate
+  - languages
+```
+
+The button can be added to the `buttons` of page and user blueprints as well.
+
+### Users
+
+Enable the translation in the blueprint of a user role and choose **Translate** in the settings dropdown of the user or of your account:
+
+```yaml
+# /site/blueprints/users/editor.yml
+title: Editor
 
 options:
   translate: true
@@ -76,9 +114,9 @@ Supports nested data/form structure, but has not been tested beyond 2 levels.
 | apiKey         | string  | null    | Google Cloud Translate Api Key (required)                              |
 | fieldTypes     | array   | []      | Determines the field types you want to be translated.                  |
 | blockTypes     | array   | []      | Additional block types to translate, next to the core block types.     |
-| overwrite      | boolean | false   | If disabled, already translated fields, title and slug are kept.       |
-| translateTitle | boolean | true    | When enabled, the title is translated along with the page.             |
-| translateSlug  | boolean | true    | When enabled, the slug is translated along with the page.              |
+| overwrite      | boolean | false   | Default of the overwrite toggle in the dialog. If disabled, already translated fields, title and slug are kept. |
+| translateTitle | boolean | true    | When enabled, the title of pages and the site can be translated.       |
+| translateSlug  | boolean | true    | When enabled, the slug of pages can be translated. It is created from the translated title. |
 
 All options optional and the values can be updated in the `config.php` file and prefixed with `owebstudio.google-translate.`.
 
@@ -102,6 +140,7 @@ return [
 
 - Field should extends `\Oweb\GoogleTranslate\Fields\Field`
 - Field have to `value` and `save` methods
+- `$this->model()` returns the translated page, site or user. `$this->page()` returns the page, or `null` for the site and users
 
 ```php
 <?php
