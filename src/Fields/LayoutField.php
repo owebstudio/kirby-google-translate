@@ -10,9 +10,9 @@ use Oweb\GoogleTranslate\Translate;
  *
  * @package   Oweb
  * @author    oweb studio <support@owebstudio.com>
- * @link      https://owebstudio.com
+ * @link      https://github.com/owebstudio/kirby-google-translate
  * @copyright oweb studio
- * @license   MIT
+ * @license   https://github.com/owebstudio/.github/blob/main/LICENSE.md
  */
 class LayoutField extends Field
 {
@@ -33,7 +33,7 @@ class LayoutField extends Field
                     // only allowed block types will translated
                     if (in_array($type, $blockTypes) === true) {
                         $blockFields = $field->fields($block['type']);
-                        $fields = $this->fill($field->form($blockFields, $block['content']), $block['content'])->fields();
+                        $fields = $this->fill($field->form($blockFields), $block['content'])->fields();
 
                         $content = Translate::values($fields, $this->request());
                         $value[$lIndex]['columns'][$cIndex]['blocks'][$bIndex]['content'] = $content;

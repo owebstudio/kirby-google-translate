@@ -14,9 +14,9 @@ use Kirby\Form\Form;
  *
  * @package   Oweb
  * @author    oweb studio <support@owebstudio.com>
- * @link      https://owebstudio.com
+ * @link      https://github.com/owebstudio/kirby-google-translate
  * @copyright oweb studio
- * @license   MIT
+ * @license   https://github.com/owebstudio/.github/blob/main/LICENSE.md
  */
 abstract class Field
 {
@@ -70,15 +70,10 @@ abstract class Field
     }
 
     /**
-     * Fills a form of nested fields with the given values.
-     * The core form helpers only take the values on Kirby 4.
+     * Fills a form of nested fields with the given values
      */
     public function fill(Form $form, array $values): Form
     {
-        if (method_exists($form, 'fill') === true) {
-            $form->fill($values);
-        }
-
-        return $form;
+        return $form->fill(input: $values);
     }
 }

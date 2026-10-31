@@ -9,9 +9,9 @@ use Oweb\GoogleTranslate\Translate;
  *
  * @package   Oweb
  * @author    oweb studio <support@owebstudio.com>
- * @link      https://owebstudio.com
+ * @link      https://github.com/owebstudio/kirby-google-translate
  * @copyright oweb studio
- * @license   MIT
+ * @license   https://github.com/owebstudio/.github/blob/main/LICENSE.md
  */
 class StructureField extends Field
 {
@@ -20,7 +20,7 @@ class StructureField extends Field
         $data = [];
 
         foreach ($this->field()->value() as $value) {
-            $fields = $this->fill($this->field()->form($value), $value)->fields();
+            $fields = $this->fill($this->field()->form(), $value)->fields();
             $data[] = Translate::values($fields, $this->request());
         }
 

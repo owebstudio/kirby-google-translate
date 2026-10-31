@@ -7,23 +7,21 @@
     "owebstudio",
     "owebstudio-plugin",
     "kirby",
-    "kirby-4",
-    "kirby-5",
-    "kirby4-plugin",
-    "kirby5-plugin",
     "kirby-plugin",
     "kirby-google-translate",
     "google-translate"
   ],
   "homepage": "https://github.com/owebstudio/kirby-google-translate",
   "support": {
-    "email": "support@owebstudio.com"
+    "email": "support@owebstudio.com",
+    "issues": "https://github.com/owebstudio/kirby-google-translate/issues",
+    "source": "https://github.com/owebstudio/kirby-google-translate"
   },
   "authors": [
     {
       "name": "oweb studio",
       "email": "contact@owebstudio.com",
-      "homepage": "https://owebstudio.com"
+      "homepage": "https://github.com/owebstudio"
     }
   ],
   "config": {
@@ -40,7 +38,7 @@
     }
   },
   "require": {
-    "php": "^8.1",
+    "php": "^8.2",
     "ext-iconv": "*",
     "getkirby/composer-installer": "^1.2"
   },
@@ -48,12 +46,12 @@
     "owebstudio/kirby-license": "^1.0.1"
   },
   "conflict": {
-    "getkirby/cms": "<4.0"
+    "getkirby/cms": "<5.0"
   },
   "extra": {
     "installer-name": "kirby-google-translate",
     "kirby": {
-      "compatible": "^4.0 || ^5.0"
+      "compatible": "^5.0 || ^6.0"
     }
   },
   "prefer-stable": true
