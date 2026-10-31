@@ -27,9 +27,10 @@ class Translate
 
     public function run(): array
     {
-        $form = Form::for($this->request->page(), [
-            'language' => $this->request->sourceLanguage()
-        ]);
+        $form = Form::for(
+            model: $this->request->page(),
+            language: $this->request->sourceLanguage()
+        );
 
         return static::values($form->fields(), $this->request, false);
     }
@@ -45,8 +46,13 @@ class Translate
             $name = $field->name();
             $type = $field->type();
 
-            // do not add disabled or non-translatable fields
-            if ($field->disabled() === true || $field->translate() === false) {
+            // do not add fields without a value (info, headline …),
+            // disabled or non-translatable fields
+            if (
+                $field->hasValue() === false ||
+                (method_exists($field, 'isDisabled') === true && $field->isDisabled() === true) ||
+                $field->translate() === false
+            ) {
                 continue;
             }
 
@@ -64,7 +70,7 @@ class Translate
             if ($fieldType = Fields::get($type, $field, $request)) {
                 $data[$name] = $fieldType->value();
             } else {
-                $data[$name] = $field->content() ?? $field->value();
+                $data[$name] = $field->toFormValue();
             }
         }
 
