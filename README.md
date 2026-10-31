@@ -52,8 +52,10 @@ Supports nested data/form structure, but has not been tested beyond 2 levels.
 ### Fields
 
 - blocks
+- entries
 - layout
 - list
+- object
 - structure
 - textarea
 - text
