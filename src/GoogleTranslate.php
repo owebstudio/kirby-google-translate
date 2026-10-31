@@ -3,11 +3,12 @@
 namespace Oweb\GoogleTranslate;
 
 use Closure;
-use Exception;
-use InvalidArgumentException;
 use Kirby\Cms\App as Kirby;
 use Kirby\Data\Json;
+use Kirby\Exception\Exception;
+use Kirby\Exception\LogicException;
 use Kirby\Http\Remote;
+use Throwable;
 
 /**
  * Kirby Google Translate Package
@@ -149,7 +150,10 @@ class GoogleTranslate
         $apiKey = Kirby::instance()->option('owebstudio.google-translate.apiKey');
 
         if (empty($apiKey) === true) {
-            throw new InvalidArgumentException('Google Translation API KEY not defined yet!');
+            throw new LogicException(
+                key: 'owebstudio.google-translate.apiKey',
+                fallback: 'The Google Translate API key is not set'
+            );
         }
 
         try {
@@ -164,20 +168,30 @@ class GoogleTranslate
                     'format' => $format
                 ])
             ]);
-        } catch (Exception) {
-            throw new Exception('Google Translation failed!');
+        } catch (Throwable) {
+            throw new Exception(
+                key: 'owebstudio.google-translate.failed',
+                fallback: 'The translation with Google failed'
+            );
         }
 
         $results = $response->json() ?? [];
 
         if ($response->code() !== 200) {
-            throw new Exception($results['error']['message'] ?? 'Google Translation failed!');
+            throw new Exception(
+                message: $results['error']['message'] ?? null,
+                key: 'owebstudio.google-translate.failed',
+                fallback: 'The translation with Google failed'
+            );
         }
 
         $results = $results['data']['translations'] ?? [];
 
         if (count($results) !== count($strings)) {
-            throw new InvalidArgumentException('Google Translation failed!');
+            throw new Exception(
+                key: 'owebstudio.google-translate.failed',
+                fallback: 'The translation with Google failed'
+            );
         }
 
         return array_map(function ($result) {

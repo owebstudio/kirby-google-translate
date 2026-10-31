@@ -2,10 +2,10 @@
 
 namespace Oweb\GoogleTranslate;
 
-use InvalidArgumentException;
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Find;
 use Kirby\Cms\Page;
+use Kirby\Exception\LogicException;
 use Kirby\Exception\PermissionException;
 use Kirby\Form\Form;
 use Kirby\Toolkit\Str;
@@ -32,18 +32,27 @@ class Request
 
         // check translate api key
         if (empty($kirby->option('owebstudio.google-translate.apiKey')) === true) {
-            throw new InvalidArgumentException('Google Translation API KEY not defined yet!');
+            throw new LogicException(
+                key: 'owebstudio.google-translate.apiKey',
+                fallback: 'The Google Translate API key is not set'
+            );
         }
 
         // only secondary languages can be translated
         if ($kirby->multilang() === false || $kirby->language()->isDefault() === true) {
-            throw new InvalidArgumentException('Google Translation is only available for secondary languages!');
+            throw new LogicException(
+                key: 'owebstudio.google-translate.language',
+                fallback: 'Only secondary languages can be translated'
+            );
         }
 
         $this->page = Find::page($path);
 
         if (($this->page->blueprint()->options()['translate'] ?? false) === false) {
-            throw new InvalidArgumentException('Google Translation setting disabled for the page!');
+            throw new LogicException(
+                key: 'owebstudio.google-translate.disabled',
+                fallback: 'The translate option is not enabled in the blueprint'
+            );
         }
 
         // check the permission before the paid API is called
