@@ -74,7 +74,7 @@ class Translate
                 $nested === false &&
                 (
                     $request->selected($name) === false ||
-                    ($request->overwrite() === false && $request->translated($name) === true)
+                    ($request->overwrite() === false && $request->translated($name, $field->toStoredValue()) === true)
                 )
             ) {
                 continue;

@@ -5,6 +5,7 @@ namespace Oweb\GoogleTranslate;
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Find;
 use Kirby\Cms\Page;
+use Kirby\Data\Data;
 use Kirby\Exception\LogicException;
 use Kirby\Exception\PermissionException;
 use Kirby\Form\Form;
@@ -25,6 +26,7 @@ class Request
     protected Page $page;
     protected string $sourceLanguage;
     protected string $targetLanguage;
+    protected array $source;
     protected array $translation;
     protected array|null $fields;
     protected bool $overwrite;
@@ -77,6 +79,7 @@ class Request
 
         $this->sourceLanguage = $kirby->defaultLanguage()->code();
         $this->targetLanguage = $kirby->language()->code();
+        $this->source = $this->page->version()->read($this->sourceLanguage()) ?? [];
         $this->translation = $this->readTranslation();
         $this->fields = $fields !== null ? array_map('strtolower', $fields) : null;
         $this->overwrite = $overwrite ?? ($kirby->option('owebstudio.google-translate.overwrite', false) === true);
@@ -174,11 +177,33 @@ class Request
 
     /**
      * Checks if the target language had its own value for the field
-     * before the translation, without the fallback to the default language
+     * before the translation, without the fallback to the default language.
+     * Kirby stores the values of all fields when a translation is updated,
+     * so a value that is the same as the stored value of the source language
+     * is a copy and not a translation.
+     *
+     * @param mixed $source Stored value of the field in the source language,
+     *                      read from the content file if not given
      */
-    public function translated(string $field): bool
+    public function translated(string $field, mixed $source = null): bool
     {
-        return empty($this->translation[strtolower($field)] ?? null) === false;
+        $field = strtolower($field);
+        $value = $this->translation[$field] ?? null;
+
+        if (empty($value) === true) {
+            return false;
+        }
+
+        $source ??= $this->source[$field] ?? null;
+
+        // compare it the way Kirby stores the value in the content file
+        $source = match (true) {
+            is_array($source) => Data::encode($source, 'yaml'),
+            is_bool($source) => $source === true ? 'true' : 'false',
+            default => (string)$source
+        };
+
+        return $value !== trim($source);
     }
 
     /**
