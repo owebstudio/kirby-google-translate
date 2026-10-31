@@ -13,13 +13,15 @@
   ],
   "homepage": "https://github.com/owebstudio/kirby-google-translate",
   "support": {
-    "email": "support@owebstudio.com"
+    "email": "support@owebstudio.com",
+    "issues": "https://github.com/owebstudio/kirby-google-translate/issues",
+    "source": "https://github.com/owebstudio/kirby-google-translate"
   },
   "authors": [
     {
       "name": "oweb studio",
       "email": "contact@owebstudio.com",
-      "homepage": "https://owebstudio.com"
+      "homepage": "https://github.com/owebstudio"
     }
   ],
   "config": {
