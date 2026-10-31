@@ -3,6 +3,7 @@
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Find;
 use Kirby\Exception\PermissionException;
+use Kirby\Panel\Controller\Dropdown\PageSettingsDropdownController;
 use Kirby\Toolkit\Escape;
 use Kirby\Toolkit\HtmlString;
 use Kirby\Toolkit\I18n;
@@ -23,7 +24,12 @@ return [
                         $page = Find::page($path);
 
                         // load the core dropdown definition
-                        $dropdown = $page->panel()->dropdown();
+                        if (class_exists(PageSettingsDropdownController::class) === true) {
+                            // Kirby 6+
+                            $dropdown = (new PageSettingsDropdownController($page))->load();
+                        } else {
+                            $dropdown = $page->panel()->dropdown();
+                        }
 
                         // check translate api key
                         if (empty($kirby->option('owebstudio.google-translate.apiKey')) === true) {
@@ -48,7 +54,7 @@ return [
                         }
 
                         // user is not allowed to update the page
-                        if ($page->permissions()->can('update') === false) {
+                        if (Request::can($page, 'update') === false) {
                             return $dropdown;
                         }
 

@@ -47,7 +47,7 @@ class Request
         }
 
         // check the permission before the paid API is called
-        if ($this->page->permissions()->can('update') === false) {
+        if (static::can($this->page, 'update') === false) {
             throw new PermissionException(
                 key: 'page.update.permission',
                 data: ['slug' => $this->page->slug()]
@@ -71,6 +71,19 @@ class Request
         $this->translateTitleSlug();
 
         return $this->page;
+    }
+
+    /**
+     * Checks if the current user may run the action on the page
+     */
+    public static function can(Page $page, string $action): bool
+    {
+        // Kirby 6+
+        if (method_exists($page, 'guards') === true) {
+            return $page->guards()->isAvailable($action);
+        }
+
+        return $page->permissions()->can($action);
     }
 
     public function page(): Page
@@ -113,12 +126,11 @@ class Request
     protected function translateTitleSlug(): void
     {
         $overwrite = Kirby::instance()->option('owebstudio.google-translate.overwrite', false);
-        $permissions = $this->page->permissions();
 
         if (
             Kirby::instance()->option('owebstudio.google-translate.translateTitle', true) === true &&
             ($overwrite === true || $this->translated('title') === false) &&
-            $permissions->can('changeTitle') === true
+            static::can($this->page, 'changeTitle') === true
         ) {
             $title = $this->page()->content($this->sourceLanguage())->get('title')->value();
             $translatedTitle = GoogleTranslate::translate($title, $this->targetLanguage());
@@ -129,7 +141,7 @@ class Request
                 if (
                     Kirby::instance()->option('owebstudio.google-translate.translateSlug', true) === true &&
                     ($overwrite === true || $this->translated('slug') === false) &&
-                    $permissions->can('changeSlug') === true
+                    static::can($this->page, 'changeSlug') === true
                 ) {
                     $this->page = $this->page->changeSlug(Str::slug($translatedTitle), $this->targetLanguage());
                 }
