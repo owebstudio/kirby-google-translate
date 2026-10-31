@@ -3,6 +3,8 @@
 namespace Oweb\GoogleTranslate;
 
 use Kirby\Cms\App as Kirby;
+use Kirby\Cms\Page;
+use Kirby\Cms\Pages;
 use Kirby\Exception\InvalidArgumentException;
 use Kirby\Exception\PermissionException;
 use Kirby\Toolkit\Escape;
@@ -64,24 +66,37 @@ class Dialog
             ];
         }
 
+        $fields = [
+            'fields' => [
+                'type' => 'checkboxes',
+                'label' => I18n::translate('owebstudio.google-translate.fields'),
+                'help' => static::text(I18n::template('owebstudio.google-translate.fields.help', $languages)),
+                'columns' => 2,
+                'options' => $options,
+                'required' => true
+            ],
+            'overwrite' => [
+                'type' => 'toggle',
+                'label' => I18n::translate('owebstudio.google-translate.overwrite'),
+                'help' => static::text(I18n::template('owebstudio.google-translate.overwrite.help', $languages))
+            ]
+        ];
+
+        $subpages = static::subpages($request->page())->count();
+
+        if ($subpages > 0) {
+            $fields['subpages'] = [
+                'type' => 'toggle',
+                'label' => I18n::translate('owebstudio.google-translate.subpages'),
+                'text' => I18n::template('owebstudio.google-translate.subpages.text', ['count' => $subpages]),
+                'help' => static::text(I18n::translate('owebstudio.google-translate.subpages.help'))
+            ];
+        }
+
         return [
             'component' => 'k-form-dialog',
             'props' => [
-                'fields' => [
-                    'fields' => [
-                        'type' => 'checkboxes',
-                        'label' => I18n::translate('owebstudio.google-translate.fields'),
-                        'help' => static::text(I18n::template('owebstudio.google-translate.fields.help', $languages)),
-                        'columns' => 2,
-                        'options' => $options,
-                        'required' => true
-                    ],
-                    'overwrite' => [
-                        'type' => 'toggle',
-                        'label' => I18n::translate('owebstudio.google-translate.overwrite'),
-                        'help' => static::text(I18n::template('owebstudio.google-translate.overwrite.help', $languages))
-                    ]
-                ],
+                'fields' => $fields,
                 'size' => 'medium',
                 'submitButton' => [
                     'icon' => 'globe',
@@ -89,7 +104,8 @@ class Dialog
                 ],
                 'value' => [
                     'fields' => array_column($options, 'value'),
-                    'overwrite' => $request->overwrite()
+                    'overwrite' => $request->overwrite(),
+                    'subpages' => false
                 ]
             ]
         ];
@@ -114,17 +130,49 @@ class Dialog
             );
         }
 
-        $request = new Request(
-            path: $path,
-            fields: $fields,
-            overwrite: filter_var($kirby->request()->get('overwrite', false), FILTER_VALIDATE_BOOLEAN)
-        );
+        $overwrite = filter_var($kirby->request()->get('overwrite', false), FILTER_VALIDATE_BOOLEAN);
 
-        $page = $request->translate();
-
-        return [
-            'redirect' => $page->panel()->url()
+        $requests = [
+            new Request(
+                page: $path,
+                fields: $fields,
+                overwrite: $overwrite
+            )
         ];
+
+        if (filter_var($kirby->request()->get('subpages', false), FILTER_VALIDATE_BOOLEAN) === true) {
+            // subpages are translated with all their fields, the title
+            // and slug only if they are translated for the page as well
+            $except = array_diff(['title', 'slug'], array_map('strtolower', $fields));
+
+            foreach (static::subpages($requests[0]->page()) as $subpage) {
+                $requests[] = new Request(
+                    page: $subpage,
+                    overwrite: $overwrite,
+                    except: $except
+                );
+            }
+        }
+
+        $pages = Request::translateAll($requests);
+        $response = [
+            'redirect' => $pages[0]->panel()->url()
+        ];
+
+        if (count($pages) > 1) {
+            $response['message'] = I18n::template('owebstudio.google-translate.translated', ['count' => count($pages)]);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Returns all subpages and drafts below the page
+     * that the current user can translate
+     */
+    public static function subpages(Page $page): Pages
+    {
+        return $page->index(true)->filter(fn (Page $subpage) => Request::isTranslatable($subpage));
     }
 
     /**

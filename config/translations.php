@@ -11,7 +11,11 @@ return [
         'owebstudio.google-translate.fields.help' => 'Wird mit Google Translate von {source} nach {target} übersetzt.',
         'owebstudio.google-translate.overwrite' => 'Übersetzungen überschreiben',
         'owebstudio.google-translate.overwrite.help' => 'Wenn dies ausgeschaltet ist, bleiben Felder erhalten, die bereits auf {target} übersetzt sind.',
+        'owebstudio.google-translate.subpages' => 'Unterseiten',
+        'owebstudio.google-translate.subpages.help' => 'Alle Felder der Unterseiten werden übersetzt. Die Auswahl für Titel und URL-Anhang und das Überschreiben gelten auch für sie.',
+        'owebstudio.google-translate.subpages.text' => 'Alle Unterseiten übersetzen ({count})',
         'owebstudio.google-translate.translate' => 'Übersetzen',
+        'owebstudio.google-translate.translated' => '{count} Seiten übersetzt',
     ],
     'en' => [
         'error.owebstudio.google-translate.apiKey' => 'The Google Translate API key is not set',
@@ -23,7 +27,11 @@ return [
         'owebstudio.google-translate.fields.help' => 'Translated from {source} into {target} with Google Translate.',
         'owebstudio.google-translate.overwrite' => 'Overwrite translations',
         'owebstudio.google-translate.overwrite.help' => 'When this is off, fields that are already translated into {target} are kept.',
+        'owebstudio.google-translate.subpages' => 'Subpages',
+        'owebstudio.google-translate.subpages.help' => 'All fields of the subpages are translated. The choice for the title and URL appendix and the overwrite option apply to them as well.',
+        'owebstudio.google-translate.subpages.text' => 'Translate all subpages ({count})',
         'owebstudio.google-translate.translate' => 'Translate',
+        'owebstudio.google-translate.translated' => '{count} pages translated',
     ],
     'fr' => [
         'error.owebstudio.google-translate.apiKey' => 'La clé API de Google Translate n’est pas définie',
@@ -35,7 +43,11 @@ return [
         'owebstudio.google-translate.fields.help' => 'Traduits de {source} vers {target} avec Google Translate.',
         'owebstudio.google-translate.overwrite' => 'Écraser les traductions',
         'owebstudio.google-translate.overwrite.help' => 'Si cette option est désactivée, les champs déjà traduits en {target} sont conservés.',
+        'owebstudio.google-translate.subpages' => 'Sous-pages',
+        'owebstudio.google-translate.subpages.help' => 'Tous les champs des sous-pages sont traduits. Le choix pour le titre et l’identifiant de l’URL et l’option d’écrasement s’appliquent aussi à elles.',
+        'owebstudio.google-translate.subpages.text' => 'Traduire toutes les sous-pages ({count})',
         'owebstudio.google-translate.translate' => 'Traduire',
+        'owebstudio.google-translate.translated' => '{count} pages traduites',
     ],
     'tr' => [
         'error.owebstudio.google-translate.apiKey' => 'Google Translate API anahtarı tanımlanmamış',
@@ -47,6 +59,10 @@ return [
         'owebstudio.google-translate.fields.help' => 'Google Translate ile {source} dilinden {target} diline çevrilir.',
         'owebstudio.google-translate.overwrite' => 'Çevirilerin üzerine yaz',
         'owebstudio.google-translate.overwrite.help' => 'Kapalıyken {target} diline zaten çevrilmiş alanlar korunur.',
+        'owebstudio.google-translate.subpages' => 'Alt sayfalar',
+        'owebstudio.google-translate.subpages.help' => 'Alt sayfaların tüm alanları çevrilir. Başlık ve web adres uzantısı seçimi ile üzerine yazma seçeneği onlar için de geçerlidir.',
+        'owebstudio.google-translate.subpages.text' => 'Tüm alt sayfaları çevir ({count})',
         'owebstudio.google-translate.translate' => 'Çeviri',
+        'owebstudio.google-translate.translated' => '{count} sayfa çevrildi',
     ]
 ];

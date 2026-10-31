@@ -29,20 +29,74 @@ class Request
     protected array $source;
     protected array $translation;
     protected array|null $fields;
+    protected array $except;
     protected bool $overwrite;
 
     /**
+     * @param \Kirby\Cms\Page|string $page The page or its path
      * @param array|null $fields Names of the fields to translate, including
      *                           `title` and `slug`, or `null` for all fields
      * @param bool|null $overwrite If already translated fields are translated
      *                             again, `null` for the `overwrite` option
+     * @param array $except Names of the fields not to translate
      */
     public function __construct(
-        string $path,
+        Page|string $page,
         array|null $fields = null,
-        bool|null $overwrite = null
+        bool|null $overwrite = null,
+        array $except = []
     ) {
         $kirby = Kirby::instance();
+
+        $this->page = is_string($page) === true ? Find::page($page) : $page;
+
+        // checks the api key, language, page options and permissions
+        static::ensure($this->page);
+
+        $this->sourceLanguage = $kirby->defaultLanguage()->code();
+        $this->targetLanguage = $kirby->language()->code();
+        $this->source = $this->page->version()->read($this->sourceLanguage()) ?? [];
+        $this->translation = $this->readTranslation();
+        $this->fields = $fields !== null ? array_map('strtolower', $fields) : null;
+        $this->except = array_map('strtolower', $except);
+        $this->overwrite = $overwrite ?? ($kirby->option('owebstudio.google-translate.overwrite', false) === true);
+    }
+
+    public function translate(): Page
+    {
+        return static::translateAll([$this])[0];
+    }
+
+    /**
+     * Translates the pages of all requests and sends the texts
+     * of all pages to Google in as few requests as possible
+     *
+     * @param \Oweb\GoogleTranslate\Request[] $requests
+     * @return \Kirby\Cms\Page[]
+     */
+    public static function translateAll(array $requests): array
+    {
+        // collect all texts first
+        GoogleTranslate::prefetch(function () use ($requests) {
+            foreach ($requests as $request) {
+                (new Translate($request))->run();
+                $request->translateSlug($request->translateTitle());
+            }
+        });
+
+        return array_map(fn (Request $request) => $request->update(), $requests);
+    }
+
+    /**
+     * Checks the api key, language, page options and permissions
+     * before the paid API is called
+     *
+     * @throws \Kirby\Exception\LogicException
+     * @throws \Kirby\Exception\PermissionException
+     */
+    public static function ensure(Page $page): void
+    {
+        $kirby = $page->kirby();
 
         // check translate api key
         if (empty($kirby->option('owebstudio.google-translate.apiKey')) === true) {
@@ -60,50 +114,32 @@ class Request
             );
         }
 
-        $this->page = Find::page($path);
-
-        if (($this->page->blueprint()->options()['translate'] ?? false) === false) {
+        if (($page->blueprint()->options()['translate'] ?? false) === false) {
             throw new LogicException(
                 key: 'owebstudio.google-translate.disabled',
                 fallback: 'The translate option is not enabled in the blueprint'
             );
         }
 
-        // check the permission before the paid API is called
-        if (static::can($this->page, 'update') === false) {
+        if (static::can($page, 'update') === false) {
             throw new PermissionException(
                 key: 'page.update.permission',
-                data: ['slug' => $this->page->slug()]
+                data: ['slug' => $page->slug()]
             );
         }
-
-        $this->sourceLanguage = $kirby->defaultLanguage()->code();
-        $this->targetLanguage = $kirby->language()->code();
-        $this->source = $this->page->version()->read($this->sourceLanguage()) ?? [];
-        $this->translation = $this->readTranslation();
-        $this->fields = $fields !== null ? array_map('strtolower', $fields) : null;
-        $this->overwrite = $overwrite ?? ($kirby->option('owebstudio.google-translate.overwrite', false) === true);
     }
 
-    public function translate(): Page
+    /**
+     * Checks if the current user can translate the page
+     */
+    public static function isTranslatable(Page $page): bool
     {
-        $translate = new Translate($this);
-
-        // collect all texts first to translate them in as few requests as possible
-        GoogleTranslate::prefetch(function () use ($translate) {
-            $translate->run();
-            $this->translateSlug($this->translateTitle());
-        });
-
-        $content = $translate->run();
-
-        // update the translated page
-        $this->page = $this->page->update($content, $this->targetLanguage());
-
-        // update title and slug
-        $this->translateTitleSlug();
-
-        return $this->page;
+        try {
+            static::ensure($page);
+            return true;
+        } catch (LogicException|PermissionException) {
+            return false;
+        }
     }
 
     /**
@@ -162,7 +198,11 @@ class Request
      */
     public function selected(string $field): bool
     {
-        return $this->fields === null || in_array(strtolower($field), $this->fields, true) === true;
+        $field = strtolower($field);
+
+        return
+            ($this->fields === null || in_array($field, $this->fields, true) === true) &&
+            in_array($field, $this->except, true) === false;
     }
 
     public function sourceLanguage(): string
@@ -292,5 +332,21 @@ class Request
         if (empty($slug) === false) {
             $this->page = $this->page->changeSlug($slug, $this->targetLanguage());
         }
+    }
+
+    /**
+     * Updates the page with the translated content
+     */
+    protected function update(): Page
+    {
+        $content = (new Translate($this))->run();
+
+        // update the translated page
+        $this->page = $this->page->update($content, $this->targetLanguage());
+
+        // update title and slug
+        $this->translateTitleSlug();
+
+        return $this->page;
     }
 }
