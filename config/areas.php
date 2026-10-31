@@ -4,12 +4,16 @@ use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Find;
 use Kirby\Exception\PermissionException;
 use Kirby\Toolkit\Escape;
+use Kirby\Toolkit\HtmlString;
 use Kirby\Toolkit\I18n;
 use Oweb\GoogleTranslate\License\License;
 use Oweb\GoogleTranslate\Request;
 
 return [
     'site' => function (Kirby $kirby) {
+        // the Kirby 6 Panel escapes all strings that are not marked as trusted HTML
+        $trusted = fn (string $html) => class_exists(HtmlString::class) === true ? new HtmlString($html) : $html;
+
         return [
             'dropdowns' => [
                 'page' => [
@@ -65,7 +69,7 @@ return [
             'dialogs' => [
                 'page.translate' => [
                     'pattern' => 'pages/(:any)/translate',
-                    'load' => function (string $path) {
+                    'load' => function (string $path) use ($trusted) {
                         // checks the api key, language, page options and permissions
                         new Request($path);
 
@@ -80,7 +84,7 @@ return [
                                         'license' => [
                                             'type' => 'info',
                                             'theme' => $license['theme'],
-                                            'text' => Escape::html($license['message'])
+                                            'text' => $trusted(Escape::html($license['message']))
                                         ]
                                     ],
                                     'size' => 'medium',
@@ -100,7 +104,7 @@ return [
                             'props' => [
                                 'size' => 'medium',
                                 'submitButton' => I18n::translate('confirm'),
-                                'text' => t('owebstudio.google-translate.info') . "<br><br>" . t('owebstudio.google-translate.confirm'),
+                                'text' => $trusted(t('owebstudio.google-translate.info') . "<br><br>" . t('owebstudio.google-translate.confirm')),
                                 'theme' => 'negative'
                             ]
                         ];
