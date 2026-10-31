@@ -70,15 +70,10 @@ abstract class Field
     }
 
     /**
-     * Fills a form of nested fields with the given values.
-     * The core form helpers only take the values on Kirby 4.
+     * Fills a form of nested fields with the given values
      */
     public function fill(Form $form, array $values): Form
     {
-        if (method_exists($form, 'fill') === true) {
-            $form->fill($values);
-        }
-
-        return $form;
+        return $form->fill(input: $values);
     }
 }

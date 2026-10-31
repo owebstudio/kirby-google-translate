@@ -30,7 +30,7 @@ class BlocksField extends Field
             // only allowed block types will translated
             if (in_array($type, $blockTypes) === true) {
                 $blockFields = $this->field()->fields($block['type']);
-                $fields = $this->fill($this->field()->form($blockFields, $block['content']), $block['content'])->fields();
+                $fields = $this->fill($this->field()->form($blockFields), $block['content'])->fields();
 
                 $block['content'] = Translate::values($fields, $this->request());
             }

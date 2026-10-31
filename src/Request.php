@@ -115,12 +115,7 @@ class Request
      */
     protected function readTranslation(): array
     {
-        // Kirby 5+
-        if (method_exists($this->page, 'version') === true) {
-            return $this->page->version()->read($this->targetLanguage()) ?? [];
-        }
-
-        return $this->page->readContent($this->targetLanguage());
+        return $this->page->version()->read($this->targetLanguage()) ?? [];
     }
 
     protected function translateTitleSlug(): void
