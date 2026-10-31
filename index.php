@@ -6,6 +6,7 @@ use Oweb\GoogleTranslate\License\License;
 require_once __DIR__ . '/lib/license/autoload.php';
 
 load([
+    'Oweb\\GoogleTranslate\\Dialog' => 'src/Dialog.php',
     'Oweb\\GoogleTranslate\\Fields' => 'src/Fields.php',
     'Oweb\\GoogleTranslate\\Fields\\BlocksField' => 'src/Fields/BlocksField.php',
     'Oweb\\GoogleTranslate\\Fields\\EntriesField' => 'src/Fields/EntriesField.php',

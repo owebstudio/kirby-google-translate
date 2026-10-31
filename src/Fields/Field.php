@@ -3,6 +3,8 @@
 namespace Oweb\GoogleTranslate\Fields;
 
 use Kirby\Cms\Page;
+use Kirby\Cms\Site;
+use Kirby\Cms\User;
 use Oweb\GoogleTranslate\GoogleTranslate;
 use Oweb\GoogleTranslate\Request;
 use Kirby\Form\Field as KirbyField;
@@ -44,7 +46,18 @@ abstract class Field
         return $this->request;
     }
 
-    public function page(): Page
+    /**
+     * Returns the page, site or user
+     */
+    public function model(): Page|Site|User
+    {
+        return $this->request->model();
+    }
+
+    /**
+     * Returns the page, or `null` for the site and users
+     */
+    public function page(): Page|null
     {
         return $this->request->page();
     }

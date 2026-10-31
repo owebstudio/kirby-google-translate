@@ -2,134 +2,120 @@
 
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Find;
-use Kirby\Exception\PermissionException;
+use Kirby\Cms\Page;
+use Kirby\Cms\Site;
+use Kirby\Cms\User;
 use Kirby\Panel\Controller\Dropdown\PageSettingsDropdownController;
-use Kirby\Toolkit\Escape;
-use Kirby\Toolkit\HtmlString;
-use Kirby\Toolkit\I18n;
-use Oweb\GoogleTranslate\License\License;
+use Kirby\Panel\Controller\Dropdown\UserSettingsDropdownController;
+use Oweb\GoogleTranslate\Dialog;
 use Oweb\GoogleTranslate\Request;
 
-return [
-    'site' => function (Kirby $kirby) {
-        // the Kirby 6 Panel escapes all strings that are not marked as trusted HTML
-        $trusted = fn (string $html) => class_exists(HtmlString::class) === true ? new HtmlString($html) : $html;
+// appends the translate option to the dropdown of a page or user
+$dropdown = function (array $options, Page|User $model): array {
+    if ($button = Dialog::button($model)) {
+        $options[] = '-';
+        $options[] = $button;
+    }
 
+    return $options;
+};
+
+$user = [
+    'options' => function (string $id) use ($dropdown) {
+        // find the right user for the dropdown
+        $user = Find::user($id);
+
+        // load the core dropdown definition
+        if (class_exists(UserSettingsDropdownController::class) === true) {
+            // Kirby 6+
+            $options = (new UserSettingsDropdownController($user))->load();
+        } else {
+            $options = $user->panel()->dropdown();
+        }
+
+        return $dropdown($options, $user);
+    }
+];
+
+// checks the api key, language, blueprint options and permissions
+$dialog = fn (Closure $model) => [
+    'load' => fn (string|null $id = null) => Dialog::load(new Request($model($id))),
+    'submit' => fn (string|null $id = null) => Dialog::submit($model($id))
+];
+
+return [
+    'site' => function (Kirby $kirby) use ($dialog, $dropdown) {
         return [
+            'buttons' => [
+                // view button for the site, pages and users, e.g.
+                // `buttons: [open, preview, google-translate, languages]` in `site.yml`
+                'google-translate' => function (mixed $model = null) {
+                    if ($model instanceof Page || $model instanceof Site || $model instanceof User) {
+                        return Dialog::button($model);
+                    }
+
+                    return null;
+                }
+            ],
             'dropdowns' => [
                 'page' => [
                     'pattern' => 'pages/(:any)',
-                    'options' => function (string $path) use ($kirby) {
+                    'options' => function (string $path) use ($dropdown) {
                         // find the right page for the dropdown
                         $page = Find::page($path);
 
                         // load the core dropdown definition
                         if (class_exists(PageSettingsDropdownController::class) === true) {
                             // Kirby 6+
-                            $dropdown = (new PageSettingsDropdownController($page))->load();
+                            $options = (new PageSettingsDropdownController($page))->load();
                         } else {
-                            $dropdown = $page->panel()->dropdown();
+                            $options = $page->panel()->dropdown();
                         }
 
-                        // check translate api key
-                        if (empty($kirby->option('owebstudio.google-translate.apiKey')) === true) {
-                            return $dropdown;
-                        }
-
-                        // don't load if multilang disabled
-                        // or default language is active
-                        if (
-                            $kirby->multilang() === false ||
-                            $kirby->language() === $kirby->defaultLanguage()
-                        ) {
-                            return $dropdown;
-                        }
-
-                        // get page options
-                        $translate = $page->blueprint()->options()['translate'] ?? false;
-
-                        // translate option disabled
-                        if ($translate === false) {
-                            return $dropdown;
-                        }
-
-                        // user is not allowed to update the page
-                        if (Request::can($page, 'update') === false) {
-                            return $dropdown;
-                        }
-
-                        // append a separator
-                        $dropdown[] = '-';
-
-                        // append a new option
-                        $dropdown[] = [
-                            'icon' => 'globe',
-                            'text' => t('owebstudio.google-translate.translate'),
-                            'dialog' => $page->panel()->url(true) . '/translate'
-                        ];
-
-                        return $dropdown;
+                        return $dropdown($options, $page);
                     }
                 ]
             ],
             'dialogs' => [
                 'page.translate' => [
                     'pattern' => 'pages/(:any)/translate',
-                    'load' => function (string $path) use ($trusted) {
-                        // checks the api key, language, page options and permissions
-                        new Request($path);
-
-                        $license = License::for('owebstudio/google-translate')->panel();
-
-                        // show the license notice instead of the translation
-                        if ($license['locked'] === true) {
-                            return [
-                                'component' => 'k-form-dialog',
-                                'props' => [
-                                    'fields' => [
-                                        'license' => [
-                                            'type' => 'info',
-                                            'theme' => $license['theme'],
-                                            'text' => $trusted(Escape::html($license['message']))
-                                        ]
-                                    ],
-                                    'size' => 'medium',
-                                    // admins can open the license dialog
-                                    'submitButton' => $license['dialog'] !== null ? [
-                                        'dialog' => $license['dialog'],
-                                        'icon' => 'key',
-                                        'text' => $license['button'],
-                                        'type' => 'button'
-                                    ] : false
-                                ]
-                            ];
-                        }
-
-                        return [
-                            'component' => 'k-text-dialog',
-                            'props' => [
-                                'size' => 'medium',
-                                'submitButton' => I18n::translate('confirm'),
-                                'text' => $trusted(t('owebstudio.google-translate.info') . "<br><br>" . t('owebstudio.google-translate.confirm')),
-                                'theme' => 'negative'
-                            ]
-                        ];
-                    },
-                    'submit' => function (string $path) use ($kirby) {
-                        $license = License::for('owebstudio/google-translate');
-
-                        // never call the Google API without a license
-                        if ($license->isLocked() === true) {
-                            throw new PermissionException($license->message());
-                        }
-
-                        $request = new Request($path);
-                        $page = $request->translate();
-
-                        return [
-                            'redirect' => $page->panel()->url()
-                        ];
-                    }
+                    ...$dialog(fn (string $path) => Find::page($path))
+                ],
+                'site.translate' => [
+                    'pattern' => 'site/translate',
+                    ...$dialog(fn () => $kirby->site())
+                ]
+            ]
+        ];
+    },
+    'users' => function () use ($dialog, $user) {
+        return [
+            'dropdowns' => [
+                'user' => [
+                    'pattern' => 'users/(:any)',
+                    ...$user
+                ]
+            ],
+            'dialogs' => [
+                'user.translate' => [
+                    'pattern' => 'users/(:any)/translate',
+                    ...$dialog(fn (string $id) => Find::user($id))
+                ]
+            ]
+        ];
+    },
+    'account' => function () use ($dialog, $user) {
+        return [
+            'dropdowns' => [
+                'account' => [
+                    'pattern' => '(account)',
+                    ...$user
+                ]
+            ],
+            'dialogs' => [
+                'account.translate' => [
+                    'pattern' => '(account)/translate',
+                    ...$dialog(fn (string $id) => Find::user($id))
                 ]
             ]
         ];

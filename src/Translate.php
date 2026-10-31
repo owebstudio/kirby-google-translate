@@ -2,8 +2,9 @@
 
 namespace Oweb\GoogleTranslate;
 
-use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Page;
+use Kirby\Form\Field;
+use Kirby\Form\FieldClass;
 use Kirby\Form\Form;
 use Kirby\Form\Fields as KirbyFields;
 
@@ -27,18 +28,35 @@ class Translate
 
     public function run(): array
     {
-        $form = Form::for(
-            model: $this->request->page(),
+        return static::values($this->form()->fields(), $this->request, false);
+    }
+
+    /**
+     * Returns the form of the page, site or user in the source language
+     */
+    public function form(): Form
+    {
+        return Form::for(
+            model: $this->request->model(),
             language: $this->request->sourceLanguage()
         );
+    }
 
-        return static::values($form->fields(), $this->request, false);
+    /**
+     * Checks if the value of the field can be translated
+     */
+    public static function accepts(Field|FieldClass $field): bool
+    {
+        // do not add fields without a value (info, headline …),
+        // disabled or non-translatable fields
+        return
+            $field->hasValue() === true &&
+            (method_exists($field, 'isDisabled') === false || $field->isDisabled() === false) &&
+            $field->translate() !== false;
     }
 
     public static function values(KirbyFields $fields, Request $request, bool $nested = true): array
     {
-        $overwrite = Kirby::instance()->option('owebstudio.google-translate.overwrite', false);
-
         $data = [];
 
         /** @var \Kirby\Form\Field $field */
@@ -46,22 +64,18 @@ class Translate
             $name = $field->name();
             $type = $field->type();
 
-            // do not add fields without a value (info, headline …),
-            // disabled or non-translatable fields
-            if (
-                $field->hasValue() === false ||
-                (method_exists($field, 'isDisabled') === true && $field->isDisabled() === true) ||
-                $field->translate() === false
-            ) {
+            if (static::accepts($field) === false) {
                 continue;
             }
 
-            // don't overwrite values if translated content exists and option disabled
-            // (nested fields of structures and blocks are checked with their parent field)
+            // only translate the selected fields and don't overwrite translated content
+            // unless enabled (nested fields of structures and blocks are checked with their parent field)
             if (
                 $nested === false &&
-                $overwrite === false &&
-                $request->translated($name) === true
+                (
+                    $request->selected($name) === false ||
+                    ($request->overwrite() === false && $request->translated($name, $field->toStoredValue()) === true)
+                )
             ) {
                 continue;
             }
