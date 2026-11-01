@@ -12,7 +12,7 @@ use Kirby\Form\Fields as KirbyFields;
  * Kirby Google Translate Package
  *
  * @package   Oweb
- * @author    oweb studio <support@owebstudio.com>
+ * @author    oweb studio <contact@owebstudio.com>
  * @link      https://github.com/owebstudio/kirby-google-translate
  * @copyright oweb studio
  * @license   https://github.com/owebstudio/.github/blob/main/LICENSE.md
